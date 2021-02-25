@@ -46,7 +46,23 @@ npm init -y
 npm install @types/three 
 [This command will install the ThreeJS definition module in vscode]
 ```
+### Netbeans Fix Script:
+```
+#!/bin/bash
 
+cd ~
+rm -rf .netbeans*
+rm -rf /tmp/`whoami`
+```
+
+### Compile and Run C Script:
+```
+#!/bin/bash
+
+gcc -Wall -ansi $1 -lm -o $2
+
+./$2
+```
 ### Acknowledgments
 
 1. Hat tip to anyone whose code was used

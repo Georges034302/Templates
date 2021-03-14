@@ -59,9 +59,10 @@ rm -rf /tmp/`whoami`
 ```
 #!/bin/bash
 
-gcc -Wall -ansi $1 -lm -o $2
+gcc -Wall -ansi $1 $2 -lm -o $3
 
-./$2
+./$3
+echo
 ```
 ### Acknowledgments
 

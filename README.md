@@ -64,9 +64,14 @@ gcc -Wall $1 $2 -lm -o $3
 ./$3
 echo
 ```
-### Acknowledgments
+### Setting Grep output coloring
+```
+add: alias grep='grep --color=auto' to the .bashrc in home directory
 
-1. Hat tip to anyone whose code was used
-2. Inspiration
-3. etc
+or (bad fix)
+export GREP_OPTIONS='--color=auto'
+export GREP_COLOR='1;33'
+echo
+```
+
 

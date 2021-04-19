@@ -9,10 +9,10 @@ create table "USER"
     
 NSERT INTO ISDUSER."USER" (EMAIL, "NAME", PASSWORD, PHONE, GENDER, DOB) 
 	VALUES 
-  ('jane.doe@uts.edu.au', 'Jane S. Doe', '12345', '99990000', 'F', '05/05/1995'),
-	VALUES ('john.smith@uts.edu.au', 'John Smith', '111111', '99991111', 'M', '05/06/1990'),
-	VALUES ('jim.carry@uts.edu.au', 'Jim Carry', '12333', '99912000', 'M', '06/05/1999',
-	VALUES ('julie.l@uts.edu.au', 'Julie Laveaux', '12222', '99991100', 'F', '05/11/2000'), 
-	VALUES ('lucy.lu@uts.edu.au', 'Lucy Lu', '66600', '99990011', 'F', '02/01/1991');
+  	('jane.doe@uts.edu.au', 'Jane S. Doe', '12345', '99990000', 'F', '05/05/1995'),
+	('john.smith@uts.edu.au', 'John Smith', '111111', '99991111', 'M', '05/06/1990'),
+	('jim.carry@uts.edu.au', 'Jim Carry', '12333', '99912000', 'M', '06/05/1999',
+	('julie.l@uts.edu.au', 'Julie Laveaux', '12222', '99991100', 'F', '05/11/2000'), 
+	('lucy.lu@uts.edu.au', 'Lucy Lu', '66600', '99990011', 'F', '02/01/1991');
 
  

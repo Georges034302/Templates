@@ -1,18 +1,19 @@
-create table "USER"
-    (EMAIL varchar(50) NOT NULL,
-    "NAME" varchar(100) NOT NULL,
-    PASSWORD varchar(20) NOT NULL,
-    PHONE varchar(20) NOT NULL,
-    GENDER varchar(12) NOT NULL,
-    DOB varchar(15) NOT NULL,
-    PRIMARY KEY (EMAIL));
+CREATE TABLE "USER" (
+ID INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY(Start with 1, Increment by 1), 
+"NAME" VARCHAR(255) NOT NULL, 
+EMAIL VARCHAR(255) NOT NULL, 
+PASSWORD VARCHAR(255) NOT NULL, 
+PHONE VARCHAR(255) NOT NULL, 
+GENDER VARCHAR(255) NOT NULL, 
+DOB VARCHAR(255) NOT NULL, 
+PRIMARY KEY (ID));
     
-NSERT INTO ISDUSER."USER" (EMAIL, "NAME", PASSWORD, PHONE, GENDER, DOB) 
+INSERT INTO SUPERUSER."USER" ("NAME",EMAIL, PASSWORD, PHONE, GENDER, DOB) 
 	VALUES 
-  	('jane.doe@uts.edu.au', 'Jane S. Doe', '12345', '99990000', 'F', '05/05/1995'),
-	('john.smith@uts.edu.au', 'John Smith', '111111', '99991111', 'M', '05/06/1990'),
-	('jim.carry@uts.edu.au', 'Jim Carry', '12333', '99912000', 'M', '06/05/1999'),
-	('julie.l@uts.edu.au', 'Julie Laveaux', '12222', '99991100', 'F', '05/11/2000'), 
-	('lucy.lu@uts.edu.au', 'Lucy Lu', '66600', '99990011', 'F', '02/01/1991');
+  	('Jane S. Doe','jane.doe@uts.edu.au',  '12345', '99990000', 'F', '05/05/1995'),
+	('John Smith','john.smith@uts.edu.au',  '111111', '99991111', 'M', '05/06/1990'),
+	('Jim Carry','jim.carry@uts.edu.au',  '12333', '99912000', 'M', '06/05/1999'),
+	('Julie Laveaux','julie.l@uts.edu.au',  '12222', '99991100', 'F', '05/11/2000'), 
+	('Lucy Lu','lucy.lu@uts.edu.au',  '66600', '99990011', 'F', '02/01/1991');
 
  

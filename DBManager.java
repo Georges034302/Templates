@@ -129,8 +129,10 @@ public class DBManager extends DB{
     }
 
     //Add a user-data into the database
-    public void addUser(String table,String ID, String email, String name, String password, String dob, String favcol) throws SQLException {        
-        st.executeUpdate("INSERT INTO "+table+" VALUES ('" + ID + "', '" + email + "', '" + name + "', '" + password + "', '" + dob + "', '" + favcol + "')");
+    public void addUser(String name, String email, String pass, String phone, String gender, String dob) throws SQLException{
+        String columns = "INSERT INTO ISDUSER.\"USER\"(\"NAME\",EMAIL,PASSWORD,PHONE,GENDER,DOB)";
+        String values =  "VALUES ('" + name + "', '" + email + "', '" + pass + "', '" + phone + "', '" + gender + "', '" + dob +"')";
+        st.executeUpdate(columns+values);
     }
 
     //update a user details in the database

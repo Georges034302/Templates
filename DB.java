@@ -6,25 +6,17 @@
 package uts.isd.model.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
  *
  * @author George
  */
-public class DBConnector extends DB{
-
-    public DBConnector() throws ClassNotFoundException, SQLException{
-        Class.forName(super.driver);
-        super.con = DriverManager.getConnection(URL+db, dbuser,dbpass);
-    }    
-
-    public Connection connection() {
-        return this.con;
-    }
-
-    public void closeConnection() throws SQLException{
-        this.con.close();
-    }    
+public abstract class DB {
+    protected String URL = "jdbc:derby://localhost:1527/";
+    protected String db  = "ISDDEMO";
+    protected String dbuser = "isduser";
+    protected String dbpass = "admin";
+    protected String driver  = "org.apache.derby.jdbc.ClientDriver";
+    protected Connection con;
 }

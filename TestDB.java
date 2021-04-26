@@ -1,36 +1,46 @@
-import uts.isd.model.dao.DBManager;
-import uts.isd.model.dao.DBConnector;
-import java.sql.*;
-import java.util.*;
-import java.util.logging.*;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package uts.isd.controller;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Scanner;
+import uts.isd.model.dao.*;
+
+/**
+ *
+ * @author George
+ */
 public class TestDB {
-    private static Scanner in = new Scanner(System.in);
+    private static final Scanner in = new Scanner(System.in);
     
-    public static void main(String[] args) {
-        try {
-            DBConnector connector = new DBConnector();
-            Connection conn = connector.openConnection();
-            DBManager db = new DBManager(conn);
-            
-            int key = (new Random()).nextInt(999999);
-            String ID = "" + key; 
-            System.out.print("Student email: ");
-            String email = in.nextLine();
-            System.out.print("Student name: ");
+    public static void main(String[] args) throws ClassNotFoundException, SQLException{
+        DBConnector connector = new DBConnector();
+        Connection con = connector.connection();
+        UserManager manager = new UserManager(con);
+        
+        System.out.print("Choices a/x: ");
+        char c = in.nextLine().charAt(0);
+        while(c != 'x'){
+            System.out.print("Name: ");
             String name = in.nextLine();
-            System.out.print("Student password: ");
-            String password = in.nextLine();
-            System.out.print("Student DOB: ");
+            System.out.print("Email: ");
+            String email = in.nextLine();
+            System.out.print("Password: ");
+            String pass = in.nextLine();
+            System.out.print("Phone: ");
+            String phone = in.nextLine();
+            System.out.print("Gender: ");
+            String gender = in.nextLine();
+            System.out.print("DOB: ");
             String dob = in.nextLine();
-            System.out.print("Student favorite color: ");
-            String favcol = in.nextLine();
-            db.addUser("ISDUSER.Students",ID, email, name, password, dob, favcol);
-            System.out.println("Student is added to the database.");
-            connector.closeConnection();
+            manager.addUser(name, email, pass, phone, gender, dob);
             
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(TestDB.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.print("Choices a/x: ");
+            c = in.nextLine().charAt(0);
         }
     }
 }

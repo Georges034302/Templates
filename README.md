@@ -12,6 +12,22 @@ git remote add origin https://github.com/Georges034302/<Repo>.git
 git push -u -f origin master
 ```
 
+### Enable and Setup Python Env on VsCode:
+
+```
+- On Windows:
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process 
+  py -3 -m venv .venv    
+  .venv\scripts\activate
+
+- On Linux:
+  python3 -m venv .venv    
+  source .venv/bin/activate
+
+- To install a package in the workspace:
+  python -m pip install <package-name>
+```
+
 ### Building ThreeJS Project in VS Code:
 
 * Download and extract Three JS package from: https://threejs.org/
@@ -75,3 +91,109 @@ echo
 ```
 
 
+### MySQL Localhost Configuration:
+*Database name: bookstoredb*
+*Update: application.properties in the resources directory with your SQL parameters*
+```
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+spring.datasource.url=jdbc:mysql://${YOUR_HOSTNAME:localhost}:<SQL-PORT></SQL-PORT>/bookstoredb?serverTimezone=UTC
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.username=<SQL-Username>
+spring.datasource.password=<SQL-Password>
+```
+
+### ERRATA: CORS policy: No 'Access-Control-Allow-Origin':
+*In case the CORS block requests to resources in local host*
+
+* Option 1 (Easy Fix): Add the proper annotation in the back-end for the mapping functions
+```
+ @CrossOrigin(origins = "http://localhost:3000")
+
+```
+
+* Option 2 (Lazy Fix): Add CORS extension to your browser
+```
+https://mybrowseraddon.com/access-control-allow-origin.html
+
+```
+
+* Option 3 (Back-end Option): Add a configuration file for the CORS in the Spring Boot
+```
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+@Configuration
+public class AppCorsConfiguration {
+    @Bean
+    public FilterRegistrationBean corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        bean.setOrder(0);
+        return bean;
+    }
+}
+
+```
+
+* Option 4 (Node Server Option): Create Express Server With API Endpoints
+*Ref: https://www.stackhawk.com/blog/react-cors-guide-what-it-is-and-how-to-enable-it *
+```
+mkdir cors-server && cd cors-server 
+npm init -y 
+npm i express 
+
+```
+
+*Then create app.js*
+```
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => {
+    res.send('Welcome to CORS server')
+})
+app.get('/cors', (req, res) => {
+    res.send('This has CORS enabled')
+})
+app.listen(8080, () => {
+    console.log('listening on port 8080')
+})
+
+```
+
+*Then setup the React App by updating App.js*
+```
+import { useEffect, useState } from 'react';
+import './App.css';
+function App() {
+  const makeAPICall = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/', {mode:'cors'});
+      const data = await response.json();
+      console.log({ data })
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
+  useEffect(() => {
+    makeAPICall();
+  }, [])
+  return (
+    <div className="App">
+      <h1>React Cors Guide</h1>
+    </div>
+  );
+}
+export default App;
+```

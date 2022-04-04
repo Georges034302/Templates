@@ -41,6 +41,14 @@ git push -u -f origin master
   Get-Service -Name MSSQLSERVER
 
 ```
+  
+### Connect to MySQL DB from CLI:
+
+```
+In CLI Type the command:
+  mysql -u <username> -p -h <end-point>
+  
+```
 
 ### Building ThreeJS Project in VS Code:
 

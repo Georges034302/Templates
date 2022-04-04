@@ -47,6 +47,7 @@ git push -u -f origin master
 ```
 In CLI Type the command:
   mysql -u <username> -p -h <end-point>
+  mysql -h <mysql-instance-dns> -P 3306 -u <username> -p
   
 ```
 

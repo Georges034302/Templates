@@ -1,5 +1,5 @@
 package com.edu.model.dao;
-
+//MySQL connection configuration template
 import java.sql.Connection;
 
 public abstract class SqlDB {

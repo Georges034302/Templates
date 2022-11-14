@@ -90,6 +90,13 @@ export GREP_COLOR='1;33'
 echo
 ```
 
+### Find and Kill Process Windows
+```
+netstat -pant | grep "8080"
+
+taskkill /F /PID <process ID>
+```
+
 
 ### MySQL Localhost Configuration:
 *Database name: bookstoredb*

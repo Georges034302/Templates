@@ -28,6 +28,29 @@ git push -u -f origin master
   python -m pip install <package-name>
 ```
 
+### START/STOP MS SQL SERVICE (CMD or PowerShell):
+
+```
+- Open CMD in Administrator mode:
+  net start SQLServerAgent
+  net stop SQLServerAgent    
+
+- Open PowerShell:
+  Get-Service -Name MSSQLSERVER
+  Set-Service -Name MSSQLSERVER -Status Running -PassThru
+  Get-Service -Name MSSQLSERVER
+
+```
+  
+### Connect to MySQL DB from CLI:
+
+```
+In CLI Type the command:
+  mysql -u <username> -p -h <end-point>
+  mysql -h <mysql-instance-dns> -P 3306 -u <username> -p
+  
+```
+
 ### Building ThreeJS Project in VS Code:
 
 * Download and extract Three JS package from: https://threejs.org/

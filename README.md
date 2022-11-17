@@ -51,6 +51,14 @@ In CLI Type the command:
   
 ```
 
+### Create and Run REACT app
+
+```
+npx create-react-app@5.0.0 my-app
+
+npm start
+```
+
 ### Building ThreeJS Project in VS Code:
 
 * Download and extract Three JS package from: https://threejs.org/
@@ -210,84 +218,4 @@ spring.datasource.password=ENC(4oGwVGAp1KtoOSMkez70/vnm4m5u2H7L)
 ```
 https://mybrowseraddon.com/access-control-allow-origin.html
 
-```
-
-* Option 3 (Back-end Option): Add a configuration file for the CORS in the Spring Boot
-```
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-@Configuration
-public class AppCorsConfiguration {
-    @Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
-    }
-}
-
-```
-
-* Option 4 (Node Server Option): Create Express Server With API Endpoints
-*Ref: https://www.stackhawk.com/blog/react-cors-guide-what-it-is-and-how-to-enable-it *
-```
-mkdir cors-server && cd cors-server 
-npm init -y 
-npm i express 
-
-```
-
-*Then create app.js*
-```
-const express = require('express');
-const app = express();
-app.get('/', (req, res) => {
-    res.send('Welcome to CORS server')
-})
-app.get('/cors', (req, res) => {
-    res.send('This has CORS enabled')
-})
-app.listen(8080, () => {
-    console.log('listening on port 8080')
-})
-
-```
-
-*Then setup the React App by updating App.js*
-```
-import { useEffect, useState } from 'react';
-import './App.css';
-function App() {
-  const makeAPICall = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/', {mode:'cors'});
-      const data = await response.json();
-      console.log({ data })
-    }
-    catch (e) {
-      console.log(e)
-    }
-  }
-  useEffect(() => {
-    makeAPICall();
-  }, [])
-  return (
-    <div className="App">
-      <h1>React Cors Guide</h1>
-    </div>
-  );
-}
-export default App;
 ```

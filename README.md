@@ -46,8 +46,11 @@ git push -u -f origin master
 
 ```
 In CLI Type the command:
-  mysql -u <username> -p -h <end-point>
+  mysql -u <username> -p -h <end-point> -P PORT
   mysql -h <mysql-instance-dns> -P 3306 -u <username> -p
+
+On Localhost:
+  mysql -u root -p -P 1433
   
 ```
 

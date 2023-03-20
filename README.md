@@ -12,6 +12,11 @@ git remote add origin https://github.com/<UserID>/<Repo>.git
 git push -u -f origin master
 ```
 
+### Shorten Bash Prompt
+```
+PS1='\[\033[01;31m\]\u\[\033[01;35m\]@\[\033[01;32m\]\h\[\033[01;34m\]_\W\[\033[01;33m\]$\[\033[00m\] '
+```
+
 ### Enable and Setup Python Env on VsCode:
 
 ```

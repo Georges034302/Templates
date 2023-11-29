@@ -59,6 +59,21 @@ On Localhost:
   
 ```
 
+### Migrate MySQL Database:
+
+* Step 1: Create database backup file
+```
+
+mysqldump --single-transaction -h (old_database_host) -u (old_database_username) -p (old_database_name) > backup.sql
+
+```
+* Step 2: Restore database from backup file
+```
+
+mysql -h (new_database_host) -u (new_database_username) -p -D (new_database_name) < backup.sql
+
+```
+
 ### Create and Run REACT app
 
 ```
@@ -212,18 +227,3 @@ And change to:
 
 spring.datasource.username=ENC(OQU5p/cR6Sw946szK78WWQ==)
 spring.datasource.password=ENC(4oGwVGAp1KtoOSMkez70/vnm4m5u2H7L)
-
-### ERRATA: CORS policy: No 'Access-Control-Allow-Origin':
-*In case the CORS block requests to resources in local host*
-
-* Option 1 (Easy Fix): Add the proper annotation in the back-end for the mapping functions
-```
- @CrossOrigin(origins = "http://localhost:3000")
-
-```
-
-* Option 2 (Lazy Fix): Add CORS extension to your browser
-```
-https://mybrowseraddon.com/access-control-allow-origin.html
-
-```

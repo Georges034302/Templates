@@ -1,7 +1,6 @@
 #!/bin/bash
 
-echo -n "Enter your name: "
-read name
+read -p "Enter your name: " name
 
 if [ $name == "George" ]
 then

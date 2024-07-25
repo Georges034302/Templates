@@ -3,4 +3,8 @@
 echo -n "Enter your name: "
 read name
 
-echo "Welcome $name"
+if [ $name == "George" ]
+then
+	echo "Welcome $name"
+else
+	echo "goodbye!"

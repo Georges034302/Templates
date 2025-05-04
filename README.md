@@ -20,6 +20,23 @@ echo "TOKEN" | gh auth login --with-token
 gh auth status
 ```
 
+* Connect to VM using SSH (Authentication: password)
+```
+ssh azureuser@<Public_IP>
+```
+
+* Upload Website to VM using scp (Authentication: password)
+```
+scp -r <Website-dir> azureuser@<Public_IP>:
+```
+
+* Copy Website files to /var/www/html
+```
+ssh azureuser@<Public_IP>
+cd <Website-dir>
+sudo cp -R * /var/www/html/
+```
+
 ### Shorten Bash Prompt
 ```
 PS1='\[\033[01;31m\]\u\[\033[01;35m\]@\[\033[01;32m\]\h\[\033[01;34m\]_\W\[\033[01;33m\]$\[\033[00m\] '

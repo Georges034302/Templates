@@ -1,4 +1,4 @@
 # Sausage recipe -restored
-- opnion
-- mustarddd
-- chilli 
+- Onion
+- Mustard
+- Chilli

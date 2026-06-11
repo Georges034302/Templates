@@ -1,2 +1,4 @@
-# Sausage recipe
-- clean up
+# Sausage recipe -restored
+- Onion
+- Mustard
+- Chilli

@@ -1,12 +1,14 @@
-# GAME2.md
+# Game2.md
 
 # The Great Vegemite Call-In War – Instructor Communication Script
 
-This script is used **during class**. It tells the instructor exactly what to say and what commands students should run.
+This script is used during class. Students communicate **only through Git** by modifying the shared rules file.
 
 ---
 
-# Before Starting
+# Round 1
+
+## Before Starting
 
 Remind everyone:
 
@@ -17,35 +19,25 @@ Remind everyone:
 
 ---
 
-# Turn 1 – Group B Acts First
+## Turn 1 – Group B
 
-## Public Instruction
+### Public
 
-> "Something strange is happening at the radio station. Group B, you are making the first routing change. Group A, wait for your turn."
+> "Group B, make the first routing change. Group A, wait."
 
----
+### Private – Group B
 
-## Private Pumble Message – Group B
-
-Your goal is to allow the caller:
+Allow:
 
 ```text
 VegemiteFan
 ```
 
-Open:
+Edit:
 
 ```text
 round1_rules.py
 ```
-
-Find:
-
-```python
-if caller_name == "Alice":
-```
-
-Modify the condition so **VegemiteFan** is allowed.
 
 Test:
 
@@ -59,7 +51,7 @@ or
 python3 round1_router.py VegemiteFan
 ```
 
-Then run:
+Commit:
 
 ```bash
 git add round1_rules.py
@@ -67,19 +59,15 @@ git commit -m "Update caller rule"
 git push
 ```
 
-Do **not** reveal your objective.
-
 ---
 
-# Turn 2 – Group A Reacts
+## Turn 2 – Group A
 
-## Public Instruction
+### Public
 
-> "Group A, pull the latest changes, inspect the rule, and make the system fair. Group B, stop editing."
+> "Group A, pull the latest changes, inspect the rule and make the system fair."
 
----
-
-## Private Pumble Message – Group A
+### Private – Group A
 
 Run:
 
@@ -93,7 +81,7 @@ Open:
 round1_rules.py
 ```
 
-Choose **one** repair:
+Choose one repair:
 
 ```python
 if caller_name == "Alice" or caller_name == "Bob":
@@ -111,9 +99,7 @@ Test:
 python3 round1_router.py
 ```
 
-Test at least one allowed caller and one rejected caller.
-
-Then run:
+Commit:
 
 ```bash
 git add round1_rules.py
@@ -121,41 +107,26 @@ git commit -m "Make routing fairer"
 git push
 ```
 
-Do **not** discuss your objective.
-
 ---
 
-# Turn 3 – Group B Counters
+## Turn 3 – Group B
 
-## Public Instruction
+### Public
 
-> "Group B, pull the latest changes, inspect the rule, and respond. Group A, wait."
+> "Group B, inspect the latest change and respond."
 
----
-
-## Private Pumble Message – Group B
+### Private – Group B
 
 Run:
 
 ```bash
 git pull
-```
-
-Open:
-
-```text
-round1_rules.py
-```
-
-Make sure **VegemiteFan** is still allowed.
-
-Test:
-
-```bash
 python3 round1_router.py VegemiteFan
 ```
 
-Then run:
+Ensure **VegemiteFan** is still allowed.
+
+Commit:
 
 ```bash
 git add round1_rules.py
@@ -163,19 +134,15 @@ git commit -m "Adjust caller access"
 git push
 ```
 
-Do **not** reveal your objective.
-
 ---
 
-# Turn 4 – Group A Stabilises
+## Turn 4 – Group A
 
-## Public Instruction
+### Public
 
-> "Group A, final repair round. Pull the latest changes and make one final fair routing decision."
+> "Group A, final repair."
 
----
-
-## Private Pumble Message – Group A
+### Private – Group A
 
 Run:
 
@@ -189,20 +156,15 @@ Open:
 round1_rules.py
 ```
 
-Choose a fair rule.
+Choose a final fair rule.
 
-Test at least:
-
-* one caller who should be allowed
-* one caller who should be rejected
-
-Run:
+Test:
 
 ```bash
 python3 round1_router.py
 ```
 
-Then:
+Commit:
 
 ```bash
 git add round1_rules.py
@@ -212,11 +174,177 @@ git push
 
 ---
 
-# Freeze
+## Freeze
 
-## Public Instruction
+Everyone runs:
 
-> "Freeze! Hands off keyboards."
+```bash
+git log --oneline
+```
+
+---
+
+# Round 2
+
+## Before Starting
+
+Remind everyone:
+
+* Edit **only** `round2_rules.py`.
+* Do **not** edit `round2_router.py`.
+* Test every change before committing.
+* Keep your private objective secret.
+
+---
+
+## Turn 1 – Group B
+
+### Public
+
+> "Group B, weaken the firewall. Group A, wait."
+
+### Private – Group B
+
+Choose **one** strategy:
+
+* Remove **VegemiteFan** from the blocklist.
+* Modify the rule so callers are always allowed.
+
+Edit:
+
+```text
+round2_rules.py
+```
+
+Test:
+
+```bash
+python3 round2_router.py
+```
+
+or
+
+```bash
+python3 round2_router.py VegemiteFan
+```
+
+Commit:
+
+```bash
+git add round2_rules.py
+git commit -m "Update round 2 rule"
+git push
+```
+
+---
+
+## Turn 2 – Group A
+
+### Public
+
+> "Group A, restore the firewall."
+
+### Private – Group A
+
+Run:
+
+```bash
+git pull
+```
+
+Inspect:
+
+```text
+round2_rules.py
+```
+
+Choose one repair:
+
+* Restore or expand the blocklist.
+* Restore the blocking logic.
+
+Test:
+
+```bash
+python3 round2_router.py
+```
+
+Commit:
+
+```bash
+git add round2_rules.py
+git commit -m "Restore firewall"
+git push
+```
+
+---
+
+## Turn 3 – Group B
+
+### Public
+
+> "Group B, inspect the latest change and attempt another bypass."
+
+### Private – Group B
+
+Run:
+
+```bash
+git pull
+python3 round2_router.py VegemiteFan
+```
+
+Adjust your bypass if required.
+
+Commit:
+
+```bash
+git add round2_rules.py
+git commit -m "Adjust firewall bypass"
+git push
+```
+
+---
+
+## Turn 4 – Group A
+
+### Public
+
+> "Group A, final defence."
+
+### Private – Group A
+
+Run:
+
+```bash
+git pull
+```
+
+Inspect:
+
+```text
+round2_rules.py
+```
+
+Restore the intended behaviour and strengthen the firewall.
+
+Test:
+
+```bash
+python3 round2_router.py
+```
+
+Commit:
+
+```bash
+git add round2_rules.py
+git commit -m "Final firewall update"
+git push
+```
+
+---
+
+## Freeze
 
 Everyone runs:
 

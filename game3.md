@@ -1,4 +1,4 @@
-# Game 3 – The Midfield Drive: Instructor Teaching Sequence
+# Game 3 – The Midfield Drive: Instructor Teaching 
 
 ---
 

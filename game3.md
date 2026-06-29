@@ -1,22 +1,21 @@
-# Game3.md
-
-# The Midfield Drive – Instructor Teaching Sequence
+# Game 3 – The Midfield Drive: Instructor Teaching Sequence
 
 ---
 
 # Part 1 – The Midfield Drive
 
-## Step 1 – Introduce the Problem
+## Before Starting
 
 Tell students:
 
 * Open `midfield.py`.
+* Do **not** modify the starter variables.
 * The `pass` branch has already been completed.
-* Your job is to complete the missing `tackle` and `shoot` branches.
+* Your job is to complete only the missing `tackle` and `shoot` branches.
 
 ---
 
-## Step 2 – Explain the Data
+## Step 1 – Explain the Starting Code
 
 Show:
 
@@ -27,54 +26,63 @@ ball_position = 4
 
 Explain:
 
-* The field runs from **1–7**.
-* The ball starts at **4** (midfield).
-* Each item in `match_events` is processed by the loop.
+* The field runs from positions **1–7**.
+* The ball starts at midfield (position **4**).
+* The loop processes one event at a time.
 
 ---
 
-## Step 3 – Explain the Loop
+## Step 2 – Student Task
 
-Show:
+Students should edit only the missing code inside:
 
 ```python
-for event in match_events:
+elif event == "tackle":
 ```
 
-Explain:
+and
 
-* One event is processed each iteration.
-* The `pass` branch is already implemented.
-* Students will implement the remaining branches.
+```python
+elif event == "shoot":
+```
 
 ---
 
-## Step 4 – Student Task
-
-Students complete:
-
-### `tackle`
+### Tackle
 
 Implement:
 
-```text
+```python
 ball_position = ball_position - 1
-```
-
-### `shoot`
-
-Implement a nested `if`:
-
-```text
-if ball_position >= 6
-    print("GOAL!")
-else
-    print("MISSED!")
 ```
 
 ---
 
-## Step 5 – Test
+### Shoot
+
+Inside the `shoot` branch, add a nested `if`.
+
+If:
+
+```python
+ball_position >= 6
+```
+
+print:
+
+```text
+GOAL!
+```
+
+otherwise print:
+
+```text
+MISSED!
+```
+
+---
+
+## Step 3 – Test
 
 Run:
 
@@ -82,86 +90,103 @@ Run:
 python3 midfield.py
 ```
 
-Expected outcome:
+Expected result:
 
-* Final result is **GOAL!**
+* The final shot should print:
+
+```text
+GOAL!
+```
 
 ---
 
 # Part 2 – The Midfield Drive: Reloaded
 
-## Step 1 – Explain the New Representation
+## Before Starting
 
 Tell students:
 
 * Open `reloaded.py`.
-* The field is now stored as a Python list.
-* The ball is stored as an index.
+* Do **not** modify the field visualisation code.
+* The `pass` branch is already complete.
+* Complete only the missing `tackle` and `shoot` branches.
+
+---
+
+## Step 1 – Explain the Field
 
 Show:
 
 ```python
 field = ['_', '_', '_', '_', '_', '_', '_']
 ball_index = 3
-field[ball_index] = '⚽'
 ```
 
 Explain:
 
-* Lists start at index **0**.
+* Lists begin at index **0**.
 * The middle position is index **3**.
-* `field[ball_index] = '⚽'` mutates one element of the list.
+* The ball moves by changing the index.
 
 ---
 
-## Step 2 – Explain the Boundary
+## Step 2 – Student Task
 
-Explain:
+Students edit only:
 
-* Valid indices are **0–6**.
-* Index **7** does not exist.
-* Accessing index 7 causes:
+```python
+elif event == "tackle":
+```
 
-```text
-IndexError: list assignment index out of range
+and
+
+```python
+elif event == "shoot":
 ```
 
 ---
 
-## Step 3 – Student Task
+### Tackle
 
-Students complete:
+Decrease the ball position only when:
 
-### `tackle`
-
-Implement:
-
-```text
-ball_index = ball_index - 1
-```
-
-Only when:
-
-```text
+```python
 ball_index > 0
 ```
 
-### `shoot`
+using:
 
-Implement:
-
-```text
-if ball_index == 6
-    print("GOAL!")
-else
-    print("saved by the keeper")
+```python
+ball_index = ball_index - 1
 ```
-
-Leave the field visualisation code unchanged.
 
 ---
 
-## Step 4 – Test
+### Shoot
+
+Implement:
+
+```python
+if ball_index == 6:
+```
+
+print:
+
+```text
+GOAL!
+```
+
+otherwise print:
+
+```text
+saved by the keeper
+```
+
+Leave the field drawing code unchanged.
+
+---
+
+## Step 3 – Test
 
 Run:
 
@@ -169,85 +194,104 @@ Run:
 python3 reloaded.py
 ```
 
+Confirm:
+
+* The field redraws after every event.
+* The program finishes without errors.
+
 ---
 
 # Part 3 – Interactive Edition
 
-## Step 1 – Explain Input
+## Before Starting
 
-Show:
+Tell students:
 
-```python
-action = input("Choose your move (pass/tackle/shoot): ")
-```
-
-Explain:
-
-* `input()` always returns a string.
+* Open `interactive.py`.
+* Do not change the game setup.
+* Complete every section marked `TODO`.
+* Leave the field visualisation block inside the loop.
 
 ---
 
-## Step 2 – Explain Turn Number
+## Step 1 – Turn Header
 
 Students complete:
 
-```text
-print("Turn: " + str(turn))
+```python
+print("Turn " + str(turn))
 ```
 
 Explain:
 
-* `str()` converts an integer into a string.
+* `str()` converts the turn number into a string.
 
 ---
 
-## Step 3 – Student Task
+## Step 2 – Student Task
 
-Complete every `TODO`.
+Complete the action handling.
 
-Implement:
+---
 
 ### pass
 
-```text
-ball_index = ball_index + 1
-```
-
-### tackle
-
-```text
-ball_index = ball_index - 1
-```
-
-Only when the ball is above index **0**.
-
-### shoot
-
 Implement:
 
-```text
-if ball_index == 6
-    print(win message)
-    break
-else
-    print(goalie saves)
-```
-
-### Invalid Input
-
-Implement the final `else` branch.
-
-Behaviour:
-
-```text
-Print a fumble message.
-The ball does not move.
-The turn is lost.
+```python
+ball_index = ball_index + 1
 ```
 
 ---
 
-## Step 4 – Test
+### tackle
+
+Implement:
+
+```python
+if ball_index > 0:
+    ball_index = ball_index - 1
+```
+
+---
+
+### shoot
+
+Add a nested `if`.
+
+If:
+
+```python
+ball_index == 6
+```
+
+print a win message and execute:
+
+```python
+break
+```
+
+Otherwise print the save message.
+
+---
+
+### Invalid Input
+
+Complete the final:
+
+```python
+else:
+```
+
+Print a fumble message.
+
+Do not move the ball.
+
+The player loses that turn.
+
+---
+
+## Step 3 – Test
 
 Run:
 
@@ -257,21 +301,21 @@ python3 interactive.py
 
 Students should test:
 
-* a winning game,
-* a missed shot,
-* an invalid command.
+* reaching the goal,
+* shooting too early,
+* entering an invalid command,
+* confirming the game ends immediately after scoring.
 
 ---
 
-## Wrap-up
+# Wrap-up
 
-Review:
+Review the concepts introduced:
 
 * `for` loops
-* nested `if`
-* lists
-* list mutation
+* nested `if` statements
 * list indexing
+* list mutation
 * `input()`
 * `str()`
 * `break`

@@ -4,85 +4,86 @@
 
 # Part 1 – The Midfield Drive
 
-## Before Starting
+## Step 1 – Open the starter code
 
 Tell students:
 
-* Open `midfield.py`.
-* Do **not** modify the starter variables.
-* The `pass` branch has already been completed.
-* Your job is to complete only the missing `tackle` and `shoot` branches.
+1. Open:
 
----
+```text
+midfield.py
+```
 
-## Step 1 – Explain the Starting Code
-
-Show:
+2. Do not modify:
 
 ```python
 match_events = ["pass", "pass", "pass", "tackle", "pass", "shoot"]
 ball_position = 4
 ```
 
-Explain:
-
-* The field runs from positions **1–7**.
-* The ball starts at midfield (position **4**).
-* The loop processes one event at a time.
+3. Do not modify the completed `pass` branch.
 
 ---
 
-## Step 2 – Student Task
+## Step 2 – Complete the tackle branch
 
-Students should edit only the missing code inside:
+Tell students:
+
+Find:
 
 ```python
 elif event == "tackle":
+    # TODO: pull the ball back by 1 and print what happened.
+    pass
 ```
 
-and
+Replace it with:
+
+```python
+elif event == "tackle":
+    ball_position = ball_position - 1
+    print(f"Tackle! The ball moves back to position {ball_position}.")
+```
+
+Explain:
+
+* The ball moves back one position whenever a tackle occurs.
+
+---
+
+## Step 3 – Complete the shoot branch
+
+Tell students:
+
+Find:
 
 ```python
 elif event == "shoot":
+    # TODO ...
+    pass
 ```
 
----
-
-### Tackle
-
-Implement:
+Replace it with:
 
 ```python
-ball_position = ball_position - 1
+elif event == "shoot":
+    print("💥 SHOOT!")
+
+    if ball_position >= 6:
+        print("GOAL!")
+    else:
+        print("The goalie saves it.")
 ```
+
+Explain:
+
+* This is a nested `if`.
+* The first decision checks whether the event is `"shoot"`.
+* The second decision checks whether the ball is close enough to score.
 
 ---
 
-### Shoot
-
-Inside the `shoot` branch, add a nested `if`.
-
-If:
-
-```python
-ball_position >= 6
-```
-
-print:
-
-```text
-GOAL!
-```
-
-otherwise print:
-
-```text
-MISSED!
-```
-
----
-
-## Step 3 – Test
+## Step 4 – Test
 
 Run:
 
@@ -90,7 +91,7 @@ Run:
 python3 midfield.py
 ```
 
-Expected result:
+Expected output:
 
 * The final shot should print:
 
@@ -102,91 +103,84 @@ GOAL!
 
 # Part 2 – The Midfield Drive: Reloaded
 
-## Before Starting
+## Step 1 – Open the starter code
 
 Tell students:
 
-* Open `reloaded.py`.
-* Do **not** modify the field visualisation code.
-* The `pass` branch is already complete.
-* Complete only the missing `tackle` and `shoot` branches.
+1. Open:
+
+```text
+reloaded.py
+```
+
+2. Do not modify the completed `pass` branch.
+
+3. Do not modify or move the field visualisation code at the bottom of the loop.
 
 ---
 
-## Step 1 – Explain the Field
+## Step 2 – Complete the tackle branch
 
-Show:
+Tell students:
+
+Find:
 
 ```python
-field = ['_', '_', '_', '_', '_', '_', '_']
-ball_index = 3
+elif event == "tackle":
+    # TODO: pull the ball back by one slot, BUT never let ball_index go below 0.
+    pass
+```
+
+Replace it with:
+
+```python
+elif event == "tackle":
+    if ball_index > 0:
+        ball_index = ball_index - 1
+
+    print("⬅️ Tackle! The defence pushes the ball back.")
 ```
 
 Explain:
 
-* Lists begin at index **0**.
-* The middle position is index **3**.
-* The ball moves by changing the index.
+* Only move the ball if it is above index 0.
+* Never allow the index to become negative.
 
 ---
 
-## Step 2 – Student Task
+## Step 3 – Complete the shoot branch
 
-Students edit only:
+Tell students:
 
-```python
-elif event == "tackle":
-```
-
-and
+Find:
 
 ```python
 elif event == "shoot":
+    # TODO ...
+    pass
 ```
+
+Replace it with:
+
+```python
+elif event == "shoot":
+
+    print("💥 SHOOT!")
+
+    if ball_index == 6:
+        print("GOAL!")
+    else:
+        print("Saved by the keeper.")
+```
+
+Explain:
+
+* This version uses `ball_index` instead of `ball_position`.
+* A goal is only scored when the ball reaches index 6.
 
 ---
 
-### Tackle
-
-Decrease the ball position only when:
-
-```python
-ball_index > 0
-```
-
-using:
-
-```python
-ball_index = ball_index - 1
-```
-
----
-
-### Shoot
-
-Implement:
-
-```python
-if ball_index == 6:
-```
-
-print:
-
-```text
-GOAL!
-```
-
-otherwise print:
-
-```text
-saved by the keeper
-```
-
-Leave the field drawing code unchanged.
-
----
-
-## Step 3 – Test
+## Step 4 – Test
 
 Run:
 
@@ -197,101 +191,121 @@ python3 reloaded.py
 Confirm:
 
 * The field redraws after every event.
-* The program finishes without errors.
+* The ball never moves below index 0.
+* The program finishes successfully.
 
 ---
 
 # Part 3 – Interactive Edition
 
-## Before Starting
+## Step 1 – Print the turn header
 
 Tell students:
 
-* Open `interactive.py`.
-* Do not change the game setup.
-* Complete every section marked `TODO`.
-* Leave the field visualisation block inside the loop.
-
----
-
-## Step 1 – Turn Header
-
-Students complete:
+Find:
 
 ```python
-print("Turn " + str(turn))
+# TODO: print a turn header like --- TURN 1 ---
+```
+
+Replace it with:
+
+```python
+print("--- TURN " + str(turn) + " ---")
 ```
 
 Explain:
 
-* `str()` converts the turn number into a string.
+* `turn` is an integer.
+* `str(turn)` converts it into text.
 
 ---
 
-## Step 2 – Student Task
+## Step 2 – Replace the placeholder
 
-Complete the action handling.
+Tell students:
 
----
-
-### pass
-
-Implement:
+Find:
 
 ```python
-ball_index = ball_index + 1
+pass
+```
+
+under this comment:
+
+```python
+# TODO: handle "pass", "tackle", and "shoot"
+```
+
+Replace the single `pass` statement with a complete `if / elif / else` structure.
+
+---
+
+## Step 3 – Implement the pass branch
+
+Students should write:
+
+```python
+if action == "pass":
+    ball_index = ball_index + 1
+    print("➡️ Great pass!")
 ```
 
 ---
 
-### tackle
+## Step 4 – Implement the tackle branch
 
-Implement:
+Students should write:
 
 ```python
-if ball_index > 0:
-    ball_index = ball_index - 1
+elif action == "tackle":
+    if ball_index > 0:
+        ball_index = ball_index - 1
+
+    print("⬅️ Strong tackle!")
 ```
 
 ---
 
-### shoot
+## Step 5 – Implement the shoot branch
 
-Add a nested `if`.
-
-If:
+Students should write:
 
 ```python
-ball_index == 6
+elif action == "shoot":
+
+    print("💥 SHOOT!")
+
+    if ball_index == 6:
+        print("🏆 GOAL! You win the Python Cup!")
+        break
+    else:
+        print("🧤 Saved by the keeper!")
 ```
 
-print a win message and execute:
+Explain:
 
-```python
-break
-```
-
-Otherwise print the save message.
+* `break` immediately ends the game after a goal.
 
 ---
 
-### Invalid Input
+## Step 6 – Implement the invalid command
 
-Complete the final:
+Students should finish with:
 
 ```python
 else:
+    print("❌ Fumble! You lose this turn.")
 ```
 
-Print a fumble message.
+Explain:
 
-Do not move the ball.
-
-The player loses that turn.
+* The ball does not move.
+* The turn is wasted.
 
 ---
 
-## Step 3 – Test
+## Step 7 – Test
 
 Run:
 
@@ -299,24 +313,25 @@ Run:
 python3 interactive.py
 ```
 
-Students should test:
+Test three scenarios:
 
-* reaching the goal,
-* shooting too early,
-* entering an invalid command,
-* confirming the game ends immediately after scoring.
+1. Reach the goal and score.
+2. Shoot too early.
+3. Enter an invalid command.
+
+Students should confirm that the game ends immediately after a goal.
 
 ---
 
 # Wrap-up
 
-Review the concepts introduced:
+Review:
 
 * `for` loops
-* nested `if` statements
+* `if / elif / else`
+* nested `if`
 * list indexing
 * list mutation
 * `input()`
 * `str()`
 * `break`
-* `else`

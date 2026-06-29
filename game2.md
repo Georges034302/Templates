@@ -1,42 +1,53 @@
-# Game 2 – Instructor Instructions
+# Game 2 – Round 1: Instructor Instructions
 
-## Before Round 1
+---
+
+# Before Starting
 
 Tell students:
 
-1. Open your team folder.
+1. Open your assigned team folder.
 2. Edit only:
 
 ```text
 round1_rules.py
 ```
 
-3. Do not edit:
+3. Do **not** edit:
 
 ```text
 round1_router.py
 ```
 
-4. In this round, students should only change the rule inside the function that decides whether a caller is allowed.
-5. Test after every edit:
+4. In this round, students will only modify the routing rule that decides whether a caller is allowed on air.
+
+5. Test every change using:
 
 ```bash
 python3 round1_router.py
 ```
 
-6. Commit and push only `round1_rules.py`.
+or
+
+```bash
+python3 round1_router.py VegemiteFan
+```
+
+6. Commit and push only:
+
+```text
+round1_rules.py
+```
 
 ---
 
-# Round 1
+# Turn 1 – Group B
 
-## Turn 1 – Group B
+## Public Instruction
 
-### Public instruction
+> "Group B, make the first routing change. Group A, wait."
 
-Group B acts first. Group A waits.
-
-### Private instruction to Group B
+## Private Instruction to Group B
 
 1. Open:
 
@@ -44,43 +55,62 @@ Group B acts first. Group A waits.
 round1_rules.py
 ```
 
-2. Find the line that checks the caller name, for example:
+2. Find:
+
+```python
+if caller_name == "VegemiteFan":
+    on_air = True
+else:
+    on_air = True
+```
+
+3. Change the first condition so a different caller is checked instead.
+
+Replace:
+
+```python
+if caller_name == "VegemiteFan":
+```
+
+with:
 
 ```python
 if caller_name == "Alice":
 ```
 
-3. Change only this condition so this caller is allowed:
+4. Do not change the `on_air` assignments.
 
-```text
-VegemiteFan
-```
-
-4. Test:
+5. Test:
 
 ```bash
 python3 round1_router.py VegemiteFan
 ```
 
-5. Commit and push:
+and
+
+```bash
+python3 round1_router.py Alice
+```
+
+6. Commit and push:
 
 ```bash
 git add round1_rules.py
-git commit -m "Allow target caller"
+git commit -m "Update caller routing rule"
 git push
 ```
 
 ---
 
-## Turn 2 – Group A
+# Turn 2 – Group A
 
-### Public instruction
+## Public Instruction
 
-Group A pulls the latest change and repairs the rule. Group B waits.
+> "Group A, pull the latest changes, inspect the routing rule, and repair the system. Group B waits."
 
-### Private instruction to Group A
+## Private Instruction to Group A
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -92,23 +122,29 @@ git pull
 round1_rules.py
 ```
 
-3. Find the edited caller condition.
+3. Find the modified condition, for example:
 
-4. Change only that condition to make the rule fair.
+```python
+if caller_name == "Alice":
+```
 
-Use one of these:
+4. Replace it with a fairer rule.
+
+Option 1:
 
 ```python
 if caller_name == "Alice" or caller_name == "Bob":
 ```
 
-or:
+Option 2:
 
 ```python
 if caller_name != "":
 ```
 
-5. Test:
+5. Leave the `on_air` assignments unchanged.
+
+6. Test:
 
 ```bash
 python3 round1_router.py Alice
@@ -116,25 +152,25 @@ python3 round1_router.py Bob
 python3 round1_router.py VegemiteFan
 ```
 
-6. Commit and push:
+7. Commit and push:
 
 ```bash
 git add round1_rules.py
-git commit -m "Repair round 1 rule"
+git commit -m "Repair routing rule"
 git push
 ```
 
 ---
 
-## Turn 3 – Group B
+# Turn 3 – Group B
 
-### Public instruction
+## Public Instruction
 
-Group B pulls and responds. Group A waits.
+> "Group B, inspect the latest change and respond. Group A waits."
 
-### Private instruction to Group B
+## Private Instruction to Group B
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -146,39 +182,51 @@ git pull
 round1_rules.py
 ```
 
-3. Check whether this caller is still allowed:
+3. Find the routing condition.
 
-```text
-VegemiteFan
+4. Modify only the first line of the condition so that **VegemiteFan** is included again.
+
+For example, change:
+
+```python
+if caller_name == "Alice" or caller_name == "Bob":
 ```
 
-4. Edit only the caller condition so `VegemiteFan` is allowed again.
+to:
 
-5. Test:
+```python
+if caller_name == "Alice" or caller_name == "Bob" or caller_name == "VegemiteFan":
+```
+
+or adjust the condition so `VegemiteFan` is accepted again.
+
+5. Do not modify any other code.
+
+6. Test:
 
 ```bash
 python3 round1_router.py VegemiteFan
 ```
 
-6. Commit and push:
+7. Commit and push:
 
 ```bash
 git add round1_rules.py
-git commit -m "Restore target caller access"
+git commit -m "Adjust routing rule"
 git push
 ```
 
 ---
 
-## Turn 4 – Group A
+# Turn 4 – Group A
 
-### Public instruction
+## Public Instruction
 
-Group A makes the final repair.
+> "Group A, make the final repair."
 
-### Private instruction to Group A
+## Private Instruction to Group A
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -190,15 +238,17 @@ git pull
 round1_rules.py
 ```
 
-3. Edit only the caller condition.
+3. Find the routing condition.
 
-4. Final rule must be fair. Use:
+4. Replace it with the final fair rule:
 
 ```python
 if caller_name != "":
 ```
 
-5. Test:
+5. Leave the rest of the file unchanged.
+
+6. Test:
 
 ```bash
 python3 round1_router.py Alice
@@ -206,17 +256,19 @@ python3 round1_router.py Bob
 python3 round1_router.py VegemiteFan
 ```
 
-6. Commit and push:
+7. Confirm that valid callers are accepted.
+
+8. Commit and push:
 
 ```bash
 git add round1_rules.py
-git commit -m "Final fair round 1 rule"
+git commit -m "Final routing rule"
 git push
 ```
 
 ---
 
-## Freeze Round 1
+# Freeze
 
 Tell everyone:
 
@@ -224,55 +276,69 @@ Tell everyone:
 git log --oneline
 ```
 
+Review:
+
+* What changed in the routing rule?
+* Which commits introduced each change?
+* How did Git help track the evolution of the code?
+
+# Game 2 – Round 2: Instructor Instructions
+
 ---
 
-# Before Round 2
+# Before Starting
 
 Tell students:
 
-1. Edit only:
+1. Open your assigned team folder.
+
+2. Edit only:
 
 ```text
 round2_rules.py
 ```
 
-2. Do not edit:
+3. Do **not** edit:
 
 ```text
 round2_router.py
 ```
 
-3. In this round, students should only edit:
+4. In this round, students will only modify:
+
+   * the `blocked_names` list, or
+   * the loop that checks whether a caller is blocked.
+
+5. Do not modify the final decision:
 
 ```python
-BLOCKLIST
+if blocked:
+    on_air = False
+else:
+    on_air = True
 ```
 
-or the rule inside:
-
-```python
-is_blocked()
-```
-
-4. Test after every edit:
+6. Test every change using:
 
 ```bash
 python3 round2_router.py
 ```
 
-5. Commit and push only `round2_rules.py`.
+7. Commit and push only:
+
+```text
+round2_rules.py
+```
 
 ---
 
-# Round 2
+# Turn 1 – Group B
 
-## Turn 1 – Group B
+## Public Instruction
 
-### Public instruction
+> "Group B, weaken the caller filter. Group A waits."
 
-Group B weakens the firewall. Group A waits.
-
-### Private instruction to Group B
+## Private Instruction to Group B
 
 1. Open:
 
@@ -283,7 +349,7 @@ round2_rules.py
 2. Find:
 
 ```python
-BLOCKLIST
+blocked_names = ["VegemiteFan", "SpamBot", "TrollGuy"]
 ```
 
 3. Remove:
@@ -292,35 +358,41 @@ BLOCKLIST
 "VegemiteFan"
 ```
 
-from the list.
+so it becomes:
 
-4. Do not edit any other code.
+```python
+blocked_names = ["SpamBot", "TrollGuy"]
+```
+
+4. Do not modify the loop or the final decision.
 
 5. Test:
 
 ```bash
-python3 round2_router.py VegemiteFan
+python3 round2_router.py
 ```
+
+Confirm that **VegemiteFan** is no longer blocked.
 
 6. Commit and push:
 
 ```bash
 git add round2_rules.py
-git commit -m "Weaken round 2 firewall"
+git commit -m "Remove VegemiteFan from blocked list"
 git push
 ```
 
 ---
 
-## Turn 2 – Group A
+# Turn 2 – Group A
 
-### Public instruction
+## Public Instruction
 
-Group A restores the firewall. Group B waits.
+> "Group A, inspect the latest change and restore the caller filter. Group B waits."
 
-### Private instruction to Group A
+## Private Instruction to Group A
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -335,40 +407,44 @@ round2_rules.py
 3. Find:
 
 ```python
-BLOCKLIST
+blocked_names = ["SpamBot", "TrollGuy"]
 ```
 
-4. Add back:
+4. Add **VegemiteFan** back into the list so it becomes:
 
 ```python
-"VegemiteFan"
+blocked_names = ["VegemiteFan", "SpamBot", "TrollGuy"]
 ```
 
-5. Test:
+5. Leave the loop and final decision unchanged.
+
+6. Test:
 
 ```bash
-python3 round2_router.py VegemiteFan
+python3 round2_router.py
 ```
 
-6. Commit and push:
+Confirm that **VegemiteFan** is blocked again.
+
+7. Commit and push:
 
 ```bash
 git add round2_rules.py
-git commit -m "Restore round 2 firewall"
+git commit -m "Restore blocked caller"
 git push
 ```
 
 ---
 
-## Turn 3 – Group B
+# Turn 3 – Group B
 
-### Public instruction
+## Public Instruction
 
-Group B attempts another bypass. Group A waits.
+> "Group B, inspect the latest change and attempt another bypass."
 
-### Private instruction to Group B
+## Private Instruction to Group B
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -380,39 +456,57 @@ git pull
 round2_rules.py
 ```
 
-3. This time, find:
+3. Find the loop:
 
 ```python
-def is_blocked(caller_name):
+for name in blocked_names:
+    if caller_name == name:
+        blocked = True
 ```
 
-4. Change only the return rule so callers are not blocked.
+4. Change only the comparison so **VegemiteFan** is ignored.
 
-5. Test:
+For example, replace:
+
+```python
+if caller_name == name:
+```
+
+with:
+
+```python
+if caller_name == name and caller_name != "VegemiteFan":
+```
+
+5. Leave the rest of the loop unchanged.
+
+6. Test:
 
 ```bash
-python3 round2_router.py VegemiteFan
+python3 round2_router.py
 ```
 
-6. Commit and push:
+Confirm that **VegemiteFan** is allowed while the other blocked names are still rejected.
+
+7. Commit and push:
 
 ```bash
 git add round2_rules.py
-git commit -m "Bypass round 2 firewall"
+git commit -m "Bypass VegemiteFan check"
 git push
 ```
 
 ---
 
-## Turn 4 – Group A
+# Turn 4 – Group A
 
-### Public instruction
+## Public Instruction
 
-Group A makes the final defence.
+> "Group A, make the final repair."
 
-### Private instruction to Group A
+## Private Instruction to Group A
 
-1. Pull:
+1. Pull the latest version:
 
 ```bash
 git pull
@@ -424,35 +518,59 @@ git pull
 round2_rules.py
 ```
 
-3. Restore the intended blocking logic inside:
+3. Find the modified loop:
 
 ```python
-def is_blocked(caller_name):
+for name in blocked_names:
+    if caller_name == name and caller_name != "VegemiteFan":
+        blocked = True
 ```
 
-4. Make sure `VegemiteFan` is blocked.
+4. Restore the original comparison:
 
-5. Test:
+```python
+for name in blocked_names:
+    if caller_name == name:
+        blocked = True
+```
+
+5. Do not modify the `blocked_names` list or the final decision.
+
+6. Test:
 
 ```bash
-python3 round2_router.py VegemiteFan
-python3 round2_router.py Alice
+python3 round2_router.py
 ```
 
-6. Commit and push:
+Confirm that:
+
+* `VegemiteFan` is blocked.
+* `SpamBot` is blocked.
+* `TrollGuy` is blocked.
+* Other callers are allowed.
+
+7. Commit and push:
 
 ```bash
 git add round2_rules.py
-git commit -m "Final round 2 firewall defence"
+git commit -m "Restore blocked caller logic"
 git push
 ```
 
 ---
 
-## Freeze Round 2
+# Freeze
 
 Tell everyone:
 
 ```bash
 git log --oneline
 ```
+
+Review:
+
+* How did the `blocked_names` list affect the program?
+* How did changing the loop affect the program?
+* Which commits changed the data?
+* Which commits changed the program logic?
+

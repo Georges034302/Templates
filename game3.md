@@ -1,37 +1,80 @@
 # Game3.md
 
-# The Midfield Drive – Instructor Guide
+# The Midfield Drive – Instructor Teaching Sequence
 
 ---
 
 # Part 1 – The Midfield Drive
 
-## Instructor
+## Step 1 – Introduce the Problem
 
 Tell students:
 
 * Open `midfield.py`.
-* Complete the missing **`tackle`** and **`shoot`** branches.
-* Do **not** modify the starter code.
-* Run the program after every change.
-
-Run:
-
-```bash
-python3 midfield.py
-```
-
-Walk around and ask:
-
-* What should a tackle do?
-* When should a shot become **GOAL!**?
-* Why does `shoot` need another `if` statement?
-
-Do **not** give the solution immediately.
+* The `pass` branch has already been completed.
+* Your job is to complete the missing `tackle` and `shoot` branches.
 
 ---
 
-## Freeze
+## Step 2 – Explain the Data
+
+Show:
+
+```python
+match_events = ["pass", "pass", "pass", "tackle", "pass", "shoot"]
+ball_position = 4
+```
+
+Explain:
+
+* The field runs from **1–7**.
+* The ball starts at **4** (midfield).
+* Each item in `match_events` is processed by the loop.
+
+---
+
+## Step 3 – Explain the Loop
+
+Show:
+
+```python
+for event in match_events:
+```
+
+Explain:
+
+* One event is processed each iteration.
+* The `pass` branch is already implemented.
+* Students will implement the remaining branches.
+
+---
+
+## Step 4 – Student Task
+
+Students complete:
+
+### `tackle`
+
+Implement:
+
+```text
+ball_position = ball_position - 1
+```
+
+### `shoot`
+
+Implement a nested `if`:
+
+```text
+if ball_position >= 6
+    print("GOAL!")
+else
+    print("MISSED!")
+```
+
+---
+
+## Step 5 – Test
 
 Run:
 
@@ -39,83 +82,172 @@ Run:
 python3 midfield.py
 ```
 
-Brief discussion:
+Expected outcome:
 
-* How does the loop update the ball position?
-* Why is there a nested `if` inside `shoot`?
+* Final result is **GOAL!**
 
 ---
 
 # Part 2 – The Midfield Drive: Reloaded
 
-## Instructor
+## Step 1 – Explain the New Representation
 
 Tell students:
 
 * Open `reloaded.py`.
-* Complete the missing **`tackle`** and **`shoot`** branches.
-* Keep the field visualisation code unchanged.
-* Run the program after every change.
+* The field is now stored as a Python list.
+* The ball is stored as an index.
 
-Run:
+Show:
 
-```bash
-python3 reloaded.py
+```python
+field = ['_', '_', '_', '_', '_', '_', '_']
+ball_index = 3
+field[ball_index] = '⚽'
 ```
 
-Walk around and ask:
+Explain:
 
-* Why does the field start at index **0**?
-* What happens if the index becomes **7**?
-* What is the difference between changing a variable and changing a list element?
-
-If students encounter an `IndexError`, use it to explain list boundaries.
+* Lists start at index **0**.
+* The middle position is index **3**.
+* `field[ball_index] = '⚽'` mutates one element of the list.
 
 ---
 
-## Freeze
+## Step 2 – Explain the Boundary
+
+Explain:
+
+* Valid indices are **0–6**.
+* Index **7** does not exist.
+* Accessing index 7 causes:
+
+```text
+IndexError: list assignment index out of range
+```
+
+---
+
+## Step 3 – Student Task
+
+Students complete:
+
+### `tackle`
+
+Implement:
+
+```text
+ball_index = ball_index - 1
+```
+
+Only when:
+
+```text
+ball_index > 0
+```
+
+### `shoot`
+
+Implement:
+
+```text
+if ball_index == 6
+    print("GOAL!")
+else
+    print("saved by the keeper")
+```
+
+Leave the field visualisation code unchanged.
+
+---
+
+## Step 4 – Test
 
 Run:
 
 ```bash
 python3 reloaded.py
 ```
-
-Brief discussion:
-
-* What is list mutation?
-* Why must the index stay between **0** and **6**?
 
 ---
 
 # Part 3 – Interactive Edition
 
-## Instructor
+## Step 1 – Explain Input
 
-Tell students:
+Show:
 
-* Open `interactive.py`.
-* Complete every `TODO`.
-* Test after every change.
-
-Run:
-
-```bash
-python3 interactive.py
+```python
+action = input("Choose your move (pass/tackle/shoot): ")
 ```
 
-Walk around and ask:
+Explain:
 
-* Why does `input()` always return a string?
-* Why do we use `str(turn)`?
-* Where should `break` be placed?
-* What should happen when the player enters an invalid command?
-
-Do **not** give the code. Guide students with questions.
+* `input()` always returns a string.
 
 ---
 
-## Freeze
+## Step 2 – Explain Turn Number
+
+Students complete:
+
+```text
+print("Turn: " + str(turn))
+```
+
+Explain:
+
+* `str()` converts an integer into a string.
+
+---
+
+## Step 3 – Student Task
+
+Complete every `TODO`.
+
+Implement:
+
+### pass
+
+```text
+ball_index = ball_index + 1
+```
+
+### tackle
+
+```text
+ball_index = ball_index - 1
+```
+
+Only when the ball is above index **0**.
+
+### shoot
+
+Implement:
+
+```text
+if ball_index == 6
+    print(win message)
+    break
+else
+    print(goalie saves)
+```
+
+### Invalid Input
+
+Implement the final `else` branch.
+
+Behaviour:
+
+```text
+Print a fumble message.
+The ball does not move.
+The turn is lost.
+```
+
+---
+
+## Step 4 – Test
 
 Run:
 
@@ -123,8 +255,24 @@ Run:
 python3 interactive.py
 ```
 
-Brief discussion:
+Students should test:
 
-* How does `break` end the game?
-* Why is `else` useful for invalid input?
-* What new Python concepts did you use in this game?
+* a winning game,
+* a missed shot,
+* an invalid command.
+
+---
+
+## Wrap-up
+
+Review:
+
+* `for` loops
+* nested `if`
+* lists
+* list mutation
+* list indexing
+* `input()`
+* `str()`
+* `break`
+* `else`

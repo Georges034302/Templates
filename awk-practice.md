@@ -1,5 +1,38 @@
 # AWK & SED CLI Reference – `blackwood_assets.csv`
 
+```csv
+AssetID,Name,Type,Value,Location
+A00001,Asset-1,Server,1348.04,Berlin
+A00002,Asset-2,Router,11238.22,London
+A00003,Asset-3,Server,29565.58,New York
+A00004,Asset-4,Laptop,4775.39,Bogotá
+A00005,Asset-5,Laptop,28106.13,Toronto
+A00006,Asset-6,Router,22515.53,Berlin
+A00007,Asset-7,Laptop,37964.49,Tokyo
+A00008,Asset-8,Phone,17078.5,Tokyo
+A00009,Asset-9,Router,47864.93,Sydney
+A00010,Asset-10,Server,4728.02,London
+A00011,Asset-11,Printer,42389.97,Berlin
+A00012,Asset-12,Laptop,36513.62,London
+A00013,Asset-13,Phone,4032.13,Berlin
+A00014,Asset-14,Printer,28909.87,London
+A00015,Asset-15,Laptop,33097.04,Berlin
+A00016,Asset-16,Server,42780.35,London
+A00017,Asset-17,Phone,13970.88,Sydney
+A00018,Asset-18,Monitor,18572.03,Bogotá
+A00019,Asset-19,Switch,35120.83,London
+A00020,Asset-20,Monitor,26753.58,Bogotá
+A00021,Asset-21,Monitor,23166.78,Berlin
+A00022,Asset-22,Router,34262.25,New York
+A00023,Asset-23,Router,41107.95,Sydney
+A00024,Asset-24,Phone,13460.27,Bogotá
+A00025,Asset-25,Printer,10710.06,São Paulo
+A00026,Asset-26,Phone,44245.69,São Paulo
+A00027,Asset-27,Monitor,13317.52,Bogotá
+A00028,Asset-28,Switch,37375.99,Toronto
+A00029,Asset-29,Phone,18163.62,Tokyo
+```
+
 ## CLI1 – Find Malformed CSV Records
 
 ```bash

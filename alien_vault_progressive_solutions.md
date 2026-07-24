@@ -1,15 +1,25 @@
-# The Alien Vault — Progressive Solutions
+# The Alien Vault — Progressive Story and Solutions
 
-This guide contains the progressive solution for Activities 1–10.
+Each activity builds on the previous activity.
 
-- Each activity builds on the previous one.
-- Replace the earlier version of `vault.py` with the new version shown.
-- Comments marked `NEW` or `CHANGED` identify the cutover for that activity.
-- Activities 4 and 6 introduce separate exploit scripts.
+> **How to use this guide**
+>
+> - Read the mission update first.
+> - Replace the previous `vault.py` with the new version.
+> - Comments marked `NEW` or `CHANGED` identify the cutover.
+> - Activities 4 and 6 introduce separate exploit scripts.
 
 ---
 
 ## Activity 1 — The Empty Vault
+
+> **Mission Update**
+>
+> - The temporary cage is failing.
+> - The engineering team begins building a digital vault.
+> - The vault must start empty.
+> - The vault must store the captured alien.
+> - Gorgax will be secured inside the first vault object.
 
 ### `vault.py`
 
@@ -20,7 +30,7 @@ class AlienVault:
         self.occupant = None
 
     def capture(self, alien_name):
-        # NEW: Store the captured alien inside the vault.
+        # NEW: Store the captured alien.
         self.occupant = alien_name
         print(f"SYSTEM: {alien_name} has been secured in the vault.")
 
@@ -37,15 +47,17 @@ if __name__ == "__main__":
     print(vault)
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 2 — Talking to the Alien
+
+> **Mission Update**
+>
+> - Scientists need to communicate with the alien safely.
+> - Opening the vault is too dangerous.
+> - The team installs a software-controlled intercom.
+> - The vault checks whether an alien is inside.
+> - The alien responds through a controlled method.
 
 ### `vault.py`
 
@@ -79,15 +91,17 @@ if __name__ == "__main__":
     print(vault.greet_alien())
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 3 — The Danger of Open Controls
+
+> **Mission Update**
+>
+> - The vault needs environmental controls.
+> - The team adds containment, temperature, and oxygen levels.
+> - All three controls are public.
+> - External code can read or change them directly.
+> - The alien detects the exposed controls.
 
 ### `vault.py`
 
@@ -127,15 +141,17 @@ if __name__ == "__main__":
     print(vault)
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 4 — The First Escape
+
+> **Mission Update**
+>
+> - The alien launches its first software attack.
+> - An external script changes the public containment level.
+> - The containment level is forced to zero.
+> - The vault performs no validation.
+> - The containment field collapses and the alien escapes.
 
 Keep the Activity 3 version of `vault.py`.
 
@@ -160,15 +176,17 @@ print(vault)
 print("The alien has escaped!")
 ```
 
-Run:
-
-```bash
-python3 exploit.py
-```
-
 ---
 
 ## Activity 5 — Protected Attributes
+
+> **Mission Update**
+>
+> - The team marks the controls as internal.
+> - A single underscore is added to each control name.
+> - The underscore warns developers not to access the data directly.
+> - The controls now appear protected.
+> - The team must test whether Python enforces the warning.
 
 ### `vault.py`
 
@@ -208,15 +226,17 @@ if __name__ == "__main__":
     print(vault)
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 6 — The Alien Ignores Warnings
+
+> **Mission Update**
+>
+> - The alien tests the protected controls.
+> - It discovers that the underscore is only a convention.
+> - Python still allows direct external access.
+> - The alien changes containment to zero.
+> - The alien escapes again.
 
 Keep the Activity 5 version of `vault.py`.
 
@@ -238,15 +258,17 @@ print(f"New containment: {vault._containment_level}%")
 print("The alien ignored the warning and escaped again!")
 ```
 
-Run:
-
-```bash
-python3 exploit_v2.py
-```
-
 ---
 
 ## Activity 7 — Private Attributes
+
+> **Mission Update**
+>
+> - The team replaces warnings with stronger digital locks.
+> - The containment level receives a double underscore.
+> - Python applies name mangling.
+> - Normal external access now raises an error.
+> - The private control is better protected from accidental access.
 
 ### `vault.py`
 
@@ -272,7 +294,7 @@ class AlienVault:
         return f"{self.occupant} responds with strange clicking sounds."
 
     def __str__(self):
-        # CHANGED: The class can still access its private attribute.
+        # CHANGED: The class can access its private attribute.
         return (
             f"Occupant: {self.occupant}\n"
             f"Containment: {self.__containment_level}%"
@@ -291,15 +313,19 @@ if __name__ == "__main__":
     # print(vault.__containment_level)
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 8 — Building the Official Controls
+
+> **Mission Update**
+>
+> - Scientists still need a safe way to operate the vault.
+> - The team creates official control methods.
+> - `reinforce()` raises containment.
+> - `weaken()` lowers containment.
+> - `emergency_lockdown()` restores full containment.
+> - `get_status()` reports the current level.
+> - Containment remains between 0 and 100.
 
 ### `vault.py`
 
@@ -336,11 +362,11 @@ class AlienVault:
             self.__containment_level - amount
         )
 
-    # NEW: Restore maximum containment immediately.
+    # NEW: Restore maximum containment.
     def emergency_lockdown(self):
         self.__containment_level = 100
 
-    # NEW: Safely return the current containment status.
+    # NEW: Safely report the containment level.
     def get_status(self):
         return f"Containment: {self.__containment_level}%"
 
@@ -370,15 +396,18 @@ if __name__ == "__main__":
     print(vault)
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 9 — Alien Communication Console
+
+> **Mission Update**
+>
+> - The physical vault is secure.
+> - Scientists need a safer translation system.
+> - Alien responses are stored in a private dictionary.
+> - Questions are submitted through `ask()`.
+> - The internal translation logic remains hidden.
+> - The alien answers recognised questions safely.
 
 ### `vault.py`
 
@@ -426,7 +455,7 @@ class AlienVault:
     def get_status(self):
         return f"Containment: {self.__containment_level}%"
 
-    # NEW: Public method that hides the translation logic.
+    # NEW: Public method that hides translation logic.
     def ask(self, question):
         question = question.lower()
 
@@ -446,21 +475,23 @@ class AlienVault:
 if __name__ == "__main__":
     vault = AlienVault("Gorgax")
 
-    # NEW: Test the communication console.
     print(vault.ask("Hello there, creature!"))
     print(vault.ask("What is your name?"))
     print(vault.ask("What is the meaning of life?"))
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
 ## Activity 10 — Properties
+
+> **Mission Update**
+>
+> - Operators want a simple containment dashboard.
+> - The private containment level must remain protected.
+> - The team adds a read-only property.
+> - Operators can read the value using attribute syntax.
+> - The private value cannot be changed through the property.
+> - The final vault combines private data, controlled methods, and safe access.
 
 ### Final `vault.py`
 
@@ -479,7 +510,7 @@ class AlienVault:
             "name": "I am designated Gorgax."
         }
 
-    # NEW: Read-only public access to the private containment level.
+    # NEW: Read-only public access to the private level.
     @property
     def containment_level(self):
         return self.__containment_level
@@ -545,19 +576,12 @@ if __name__ == "__main__":
     print(vault.ask("Can you escape?"))
 ```
 
-Run:
-
-```bash
-python3 vault.py
-```
-
 ---
 
-## Final File Structure
+## Mission Accomplished
 
-```text
-project/
-├── vault.py
-├── exploit.py
-└── exploit_v2.py
-```
+> - The Alien Vault is complete.
+> - Internal state is protected.
+> - External code must use controlled interfaces.
+> - The alien can no longer change containment directly.
+> - Mars Base Alpha is secure.

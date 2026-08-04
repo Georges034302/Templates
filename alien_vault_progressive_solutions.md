@@ -479,6 +479,96 @@ if __name__ == "__main__":
     print(vault.ask("What is the meaning of life?"))
 ```
 
+**Interactive Menu**
+```python
+class AlienVault:
+    def __init__(self, occupant=None, containment_level=100):
+        self.occupant = occupant
+        self.__containment_level = containment_level
+
+        self._temperature = 20
+        self._oxygen_level = 21
+
+        self.__responses = {
+            "hello": "Greetings, carbon-construct.",
+            "escape": "Your structures are temporary.",
+            "are you": "I am designated Gorgax.",
+            "name": "I am T-REX."
+        }
+
+    # NEW: Read-only public access to the private level.
+    @property
+    def containment_level(self):
+        return self.__containment_level
+
+    def capture(self, alien_name):
+        self.occupant = alien_name
+        print(f"SYSTEM: {alien_name} has been secured in the vault.")
+
+    def greet_alien(self):
+        if self.occupant is None:
+            return "The vault is empty. Silence echoes back."
+
+        return f"{self.occupant} responds with strange clicking sounds."
+
+    def reinforce(self, amount):
+        self.__containment_level = min(
+            100,
+            self.__containment_level + amount
+        )
+
+    def weaken(self, amount):
+        self.__containment_level = max(
+            0,
+            self.__containment_level - amount
+        )
+
+    def emergency_lockdown(self):
+        self.__containment_level = 100
+
+    def get_status(self):
+        # CHANGED: Read through the property.
+        return f"Containment: {self.containment_level}%"
+
+    def ask(self, question):
+        question = question.lower()
+
+        for keyword in self.__responses:
+            if keyword in question:
+                return self.__responses[keyword]
+
+        return "The alien stares blankly with its primary eyes."
+
+    def __str__(self):
+        # CHANGED: Display containment through the property.
+        return (
+            f"Alien Vault\n"
+            f"Occupant: {self.occupant}\n"
+            f"Containment: {self.containment_level}%\n"
+            f"Temperature: {self._temperature}°C\n"
+            f"Oxygen: {self._oxygen_level}%"
+        )
+
+if __name__ == "__main__":
+    
+    print('============================================')
+    vault = AlienVault()
+    vault.capture('T-REX')
+    print('============================================')
+    choice = input('Operation (a/s/x): ')
+    while choice != 'x':
+      match choice:
+        case 'a': 
+          print(vault.ask(input('Ask: ')))
+        case 's':
+          print(vault)
+        case _:
+          print('Unkown choice!')
+      choice = input('Operation (a/s/x): ')
+    print(f'Good bye {vault.occupant}')
+
+```
+
 ---
 
 ## Activity 10 — Properties

@@ -25,9 +25,8 @@ Each activity builds on the previous activity.
 
 ```python
 class AlienVault:
-    def __init__(self):
-        # NEW: The vault starts empty.
-        self.occupant = None
+    def __init__(self, occupant=None):
+        self.occupant = occupant
 
     def capture(self, alien_name):
         # NEW: Store the captured alien.
@@ -63,8 +62,8 @@ if __name__ == "__main__":
 
 ```python
 class AlienVault:
-    def __init__(self):
-        self.occupant = None
+    def __init__(self, occupant=None):
+        self.occupant = occupant
 
     def capture(self, alien_name):
         self.occupant = alien_name
@@ -107,8 +106,8 @@ if __name__ == "__main__":
 
 ```python
 class AlienVault:
-    def __init__(self):
-        self.occupant = None
+    def __init__(self, occupant=None):
+        self.occupant = occupant
 
         # NEW: Public environmental controls.
         self.containment_level = 100
@@ -192,8 +191,8 @@ print("The alien has escaped!")
 
 ```python
 class AlienVault:
-    def __init__(self):
-        self.occupant = None
+    def __init__(self, occupant=None):
+        self.occupant = occupant
 
         # CHANGED: Public attributes now use a single underscore.
         self._containment_level = 100

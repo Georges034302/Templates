@@ -1,119 +1,184 @@
-# Urban Marathon Event Management System
+# Urban Marathon Event - Simple Four-Level C4 Model
 
-The following Mermaid diagram presents the principal users, platform capabilities, external services, and event outcomes described in the Urban Marathon Event case study.
+## Graph 1 - Level 1: System Context
 
 ```mermaid
 flowchart TB
-    subgraph USERS["Event Stakeholders"]
+    subgraph A["A - Users"]
         direction LR
-        RD["Race Director"]
-        PA["Participant"]
-        VC["Volunteer Coordinator"]
-        SP["Spectator"]
-        VE["Expo Vendor"]
+        Participant["Participant"]
+        Director["Race Director"]
+        Coordinator["Volunteer Coordinator"]
+        Spectator["Spectator"]
+        Vendor["Expo Vendor"]
     end
 
-    subgraph PLATFORM["Urban Marathon Management Platform"]
-        direction TB
+    B["B - Urban Marathon<br/>Management System"]
 
-        subgraph PRE["Planning and Preparation"]
-            direction LR
-            ROUTE["Route and Race Category<br/>Planning"]
-            REG["Participant Registration<br/>and Entry Management"]
-            SCHED["Race, Expo and Festivity<br/>Scheduling"]
-            PACK["Race Pack and Timing Chip<br/>Distribution"]
-        end
-
-        subgraph OPERATIONS["Race-Day Operations"]
-            direction LR
-            START["Pace-Based Start<br/>Wave Management"]
-            TRACK["Live Runner Tracking and<br/>Estimated Finish Times"]
-            STATION["Hydration, Medical and<br/>Information Stations"]
-            ALERT["Real-Time Schedule, Route<br/>and Weather Alerts"]
-        end
-
-        subgraph SUPPORT["People and Event Services"]
-            direction LR
-            VOL["Volunteer Assignments,<br/>Training and Updates"]
-            EXPO["Vendor Registration,<br/>Booths and Expo Services"]
-            VIEW["Routes, Checkpoints and<br/>Spectator Viewing Spots"]
-        end
-
-        subgraph POST["Post-Race Services"]
-            direction LR
-            RESULT["Timing, Results and<br/>Personal-Best Sharing"]
-            FEEDBACK["Participant Feedback and<br/>Future Event Improvement"]
-        end
-    end
-
-    subgraph EXTERNAL["External Coordination"]
+    subgraph C["C - External Services"]
         direction LR
-        CITY["City Services<br/>Road Closures and Safety"]
-        WEATHER["Weather and<br/>Condition Information"]
-        TIMING["Timing Chips and<br/>Checkpoint Systems"]
-        MOBILE["Web and Mobile<br/>Notification Channels"]
+        Notification["Notification Service"]
+        City["City Road Closure<br/>and Safety System"]
+        Emergency["Emergency Services<br/>System"]
     end
 
-    RD --> ROUTE
-    RD --> SCHED
-    RD --> START
-    RD --> ALERT
+    Participant <-->|"Register, receive updates and view results"| B
+    Director <-->|"Plan and control the marathon"| B
+    Coordinator <-->|"Manage volunteers and stations"| B
+    Spectator <-->|"View routes and track runners"| B
+    Vendor <-->|"Manage expo registration and booth"| B
 
-    PA --> REG
-    PA --> PACK
-    PA --> TRACK
-    PA --> RESULT
-    PA --> FEEDBACK
+    B <-->|"Send event notifications"| Notification
+    B <-->|"Exchange closure and safety updates"| City
+    B <-->|"Exchange incident and emergency updates"| Emergency
 
-    VC --> VOL
-    VC --> STATION
-    SP --> VIEW
-    SP --> TRACK
-    VE --> EXPO
+    classDef user fill:#DCEBFF,stroke:#2563EB,stroke-width:2px,color:#102A56;
+    classDef system fill:#D9DDE3,stroke:#4B5563,stroke-width:3px,color:#1F2937;
+    classDef external fill:#F1F3F5,stroke:#9CA3AF,stroke-width:2px,color:#374151;
 
-    ROUTE <--> CITY
-    STATION <--> CITY
-    ALERT <--> WEATHER
-    PACK <--> TIMING
-    TRACK <--> TIMING
-    ALERT --> MOBILE
-    RESULT --> MOBILE
+    class Participant,Director,Coordinator,Spectator,Vendor user;
+    class B system;
+    class Notification,City,Emergency external;
 
-    REG --> PACK
-    ROUTE --> SCHED
-    SCHED --> START
-    START --> TRACK
-    TRACK --> RESULT
-    RESULT --> FEEDBACK
-
-    classDef stakeholder fill:#E8F1FF,stroke:#2563EB,stroke-width:2px,color:#102A56;
-    classDef planning fill:#FFF4D6,stroke:#D97706,stroke-width:2px,color:#5B3400;
-    classDef operation fill:#E5F8EE,stroke:#168A52,stroke-width:2px,color:#073D25;
-    classDef support fill:#F2E9FF,stroke:#7C3AED,stroke-width:2px,color:#35136D;
-    classDef postrace fill:#FFE8EF,stroke:#DB2777,stroke-width:2px,color:#67113A;
-    classDef external fill:#EDF1F5,stroke:#52606D,stroke-width:2px,color:#1F2933;
-
-    class RD,PA,VC,SP,VE stakeholder;
-    class ROUTE,REG,SCHED,PACK planning;
-    class START,TRACK,STATION,ALERT operation;
-    class VOL,EXPO,VIEW support;
-    class RESULT,FEEDBACK postrace;
-    class CITY,WEATHER,TIMING,MOBILE external;
-
-    style USERS fill:#F8FAFF,stroke:#93B4E8,stroke-width:2px
-    style PLATFORM fill:#FFFFFF,stroke:#0F766E,stroke-width:3px
-    style PRE fill:#FFFCF2,stroke:#E8B04B,stroke-width:1px
-    style OPERATIONS fill:#F2FCF6,stroke:#65B98A,stroke-width:1px
-    style SUPPORT fill:#FAF7FF,stroke:#A98ADE,stroke-width:1px
-    style POST fill:#FFF5F8,stroke:#EC8EB3,stroke-width:1px
-    style EXTERNAL fill:#F7F9FB,stroke:#9AA5B1,stroke-width:2px
+    style A fill:#F7FAFF,stroke:#93B4E8,stroke-width:1px
+    style C fill:#FAFAFA,stroke:#C4C9D0,stroke-width:1px
 ```
 
-## Colour Key
+## Graph 2 - Level 2: Containers
 
-- Blue: event stakeholders
-- Gold: planning and preparation
-- Green: race-day operations
-- Purple: people and event services
-- Pink: post-race services
-- Grey: external systems and city coordination
+```mermaid
+flowchart TB
+    subgraph SYSTEM["Urban Marathon Management System"]
+        direction TB
+
+        Registration["Registration Portal<br/>Web Container"]
+        Login["Login Service<br/>API Container"]
+        MarathonAPI["Marathon API<br/>API Container"]
+        Database[("Marathon Database<br/>Database Container")]
+
+        Registration -->|"Authenticate user - HTTPS/JSON"| Login
+        Registration -->|"Submit registration and request event data - HTTPS/JSON"| MarathonAPI
+        Login -->|"Read user account - SQL"| Database
+        MarathonAPI -->|"Read and write marathon data - SQL"| Database
+    end
+
+    subgraph EXTERNAL["External Systems"]
+        direction LR
+        Messaging["Messaging Service"]
+        Timing["Timing and Checkpoint<br/>System"]
+        Weather["Weather Service"]
+        Maps["Maps and Route<br/>Service"]
+        Social["Social Media<br/>Platform"]
+    end
+
+    MarathonAPI -->|"Send notifications - HTTPS/JSON"| Messaging
+    Timing -->|"Submit checkpoint times - HTTPS/JSON"| MarathonAPI
+    MarathonAPI -->|"Request forecast - HTTPS/JSON"| Weather
+    MarathonAPI -->|"Request route map - HTTPS/JSON"| Maps
+    MarathonAPI -->|"Publish race result - HTTPS/JSON"| Social
+
+    classDef client fill:#DCEBFF,stroke:#2563EB,stroke-width:2px,color:#102A56;
+    classDef api fill:#E1F5E9,stroke:#168A52,stroke-width:2px,color:#073D25;
+    classDef database fill:#F0E5FF,stroke:#7C3AED,stroke-width:2px,color:#35136D;
+    classDef external fill:#F1F3F5,stroke:#9CA3AF,stroke-width:2px,color:#374151;
+
+    class Registration client;
+    class Login,MarathonAPI api;
+    class Database database;
+    class Messaging,Timing,Weather,Maps,Social external;
+
+    style SYSTEM fill:#FFFFFF,stroke:#4B5563,stroke-width:2px
+    style EXTERNAL fill:#FAFAFA,stroke:#C4C9D0,stroke-width:1px
+```
+
+## Graph 3 - Level 3: Marathon API Components
+
+```mermaid
+flowchart TB
+    Controller["API Controller"]
+
+    RegistrationComponent["Registration<br/>Component"]
+    RaceComponent["Race Information<br/>Component"]
+    TrackingComponent["Tracking and Results<br/>Component"]
+    CommunicationComponent["Notification and Sharing<br/>Component"]
+    DataAccess["Data Access<br/>Component"]
+
+    Controller -->|"Registration request"| RegistrationComponent
+    Controller -->|"Route or weather request"| RaceComponent
+    Controller -->|"Tracking or result request"| TrackingComponent
+
+    RegistrationComponent -->|"Store registration"| DataAccess
+    RaceComponent -->|"Store route and schedule"| DataAccess
+    TrackingComponent -->|"Store timing and result"| DataAccess
+    TrackingComponent -->|"Send finish result"| CommunicationComponent
+    CommunicationComponent -->|"Store notification record"| DataAccess
+
+    classDef controller fill:#DCEBFF,stroke:#2563EB,stroke-width:2px,color:#102A56;
+    classDef business fill:#E1F5E9,stroke:#168A52,stroke-width:2px,color:#073D25;
+    classDef communication fill:#FFF0F5,stroke:#DB2777,stroke-width:2px,color:#67113A;
+    classDef data fill:#F0E5FF,stroke:#7C3AED,stroke-width:2px,color:#35136D;
+
+    class Controller controller;
+    class RegistrationComponent,RaceComponent,TrackingComponent business;
+    class CommunicationComponent communication;
+    class DataAccess data;
+```
+
+## Graph 4 - Level 4: Class Diagram
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Participant {
+        +participantId: UUID
+        +name: String
+        +email: String
+        +register(raceId: UUID)
+    }
+
+    class Registration {
+        +registrationId: UUID
+        +category: String
+        +status: String
+        +confirm()
+    }
+
+    class Race {
+        +raceId: UUID
+        +distance: Decimal
+        +startTime: DateTime
+        +route: String
+    }
+
+    class TimingRecord {
+        +checkpointId: UUID
+        +recordedAt: DateTime
+    }
+
+    class RaceResult {
+        +finishTime: Duration
+        +personalBest: Boolean
+        +publish()
+    }
+
+    class Notification {
+        +message: String
+        +channel: String
+        +send()
+    }
+
+    Participant "1" --> "1..*" Registration : submits
+    Registration "*" --> "1" Race : enters
+    Participant "1" --> "*" TimingRecord : generates
+    Race "1" --> "*" TimingRecord : records
+    TimingRecord "*" --> "1" RaceResult : produces
+    RaceResult --> Notification : triggers
+
+    style Participant fill:#DCEBFF,stroke:#2563EB,stroke-width:2px
+    style Registration fill:#E1F5E9,stroke:#168A52,stroke-width:2px
+    style Race fill:#E1F5E9,stroke:#168A52,stroke-width:2px
+    style TimingRecord fill:#FFF4D6,stroke:#D97706,stroke-width:2px
+    style RaceResult fill:#FFF4D6,stroke:#D97706,stroke-width:2px
+    style Notification fill:#FFF0F5,stroke:#DB2777,stroke-width:2px
+```

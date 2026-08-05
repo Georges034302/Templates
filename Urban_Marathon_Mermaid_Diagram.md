@@ -1,4 +1,4 @@
-# Urban Marathon Event - Simple Four-Level C4 Model
+# Urban Marathon Event - C4 Model
 
 ## Graph 1 - Level 1: System Context
 

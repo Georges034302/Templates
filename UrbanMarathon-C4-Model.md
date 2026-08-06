@@ -148,3 +148,123 @@ flowchart LR
     GW_Router -->|"Routes reg"| REG_Core
     GW_Router -->|"Routes tracking"| TRK_Ingest
 ```
+
+---
+
+### L4 Class Architecture
+
+```mermaid
+flowchart LR
+    %% Styling Definitions
+    classDef classStyle fill:#BFDBFE,stroke:#3B82F6,stroke-width:1.5px,color:#1E3A8A;
+
+    subgraph APIGATEWAYCORE ["APIGATEWAYCORE"]
+        RequestRouter["RequestRouter
+- routeMap: Map
+- rateLimitConfig: Config
++ routeRequest()
++ checkRateLimit()"]
+        JWTAuthService["JWTAuthService
+- secretKey: String
+- tokenExpiry: Int
++ validateToken()
++ generateToken()"]
+        UserSession["UserSession
+- sessionId: UUID
+- userId: UUID
+- role: String
++ isExpired()
++ invalidate()"]
+    end
+
+    subgraph APIREGISTRATIONCORE ["APIREGISTRATIONCORE"]
+        RegistrationController["RegistrationController
+- regService: RunnerService
++ handleRegister()
++ handleCancel()"]
+        RunnerService["RunnerService
+- runnerRepo: Repository
+- bibAssigner: Assigner
++ registerRunner()
++ getRunnerDetails()"]
+        Runner["Runner
+- runnerId: UUID
+- name: String
+- email: String
+- status: Enum
++ updateProfile()
++ getRegistrationStatus()"]
+        EmergencyContact["EmergencyContact
+- contactId: UUID
+- name: String
+- phone: String
+- relation: String
++ getContactInfo()
++ updateContact()"]
+        BibAssignment["BibAssignment
+- bibNumber: Int
+- waveGroup: String
+- assignedAt: DateTime
++ assignBib()
++ verifyBib()"]
+    end
+
+    subgraph APITRACKINGCORE ["APITRACKINGCORE"]
+        RFIDIngestController["RFIDIngestController
+- sensorStream: Stream
+- bufferSize: Int
++ ingestRawTag()
++ validateSensorData()"]
+        PaceCalculatorService["PaceCalculatorService
+- courseDistance: Double
+- splitPoints: List
++ calculatePace()
++ projectFinishTime()"]
+        SplitTimeRecord["SplitTimeRecord
+- splitId: UUID
+- bibNumber: Int
+- checkpointId: String
+- timestamp: DateTime
++ recordSplit()
++ getElapsedTime()"]
+        RunnerPaceState["RunnerPaceState
+- runnerId: UUID
+- currentPace: Double
+- totalDistance: Double
++ updatePace()
++ getCurrentRank()"]
+        LeaderboardService["LeaderboardService
+- topRunnersCache: Cache
+- categoryRanks: Map
++ updateRankings()
++ getLeaderboard()"]
+    end
+
+    %% Apply Component Styles
+    class RequestRouter,JWTAuthService,UserSession classStyle;
+    class RegistrationController,RunnerService,Runner,EmergencyContact,BibAssignment classStyle;
+    class RFIDIngestController,PaceCalculatorService,SplitTimeRecord,RunnerPaceState,LeaderboardService classStyle;
+
+    %% Subgraph Background Styling
+    style APIGATEWAYCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style APIREGISTRATIONCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style APITRACKINGCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+
+    %% Global Link Styling for Orange Arrows
+    linkStyle default stroke:#FF8C00,stroke-width:2px;
+
+    %% Class Relationships
+    RequestRouter -->|"authenticates"| JWTAuthService
+    JWTAuthService -->|"validates token"| UserSession
+    RequestRouter -->|"dispatches route"| RegistrationController
+    RegistrationController -->|"delegates reg"| RunnerService
+    RunnerService -->|"creates entity"| Runner
+    Runner -->|"has 1..*"| EmergencyContact
+    Runner -->|"assigns 1..1"| BibAssignment
+
+    RFIDIngestController -->|"passes raw tag"| PaceCalculatorService
+    PaceCalculatorService -->|"persists split"| SplitTimeRecord
+    PaceCalculatorService -->|"calculates pace"| RunnerPaceState
+    RunnerPaceState -->|"recalculates rank"| LeaderboardService
+```
+

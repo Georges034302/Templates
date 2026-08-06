@@ -1,3 +1,8 @@
+# Urban Marathon C4 Model
+
+
+### L1 & L2 Containers Architecture
+
 ```mermaid
 flowchart LR
     %% Styling Definitions
@@ -71,4 +76,75 @@ flowchart LR
     EXT_Sensors -->|"RFID splits"| C_TrackAPI
     C_RegAPI -->|"Road permits"| EXT_City
     C_GW -->|"Push / SMS"| EXT_Notif
+```
+
+---
+
+### L3 Components Architecture
+
+```mermaid
+flowchart LR
+    %% Styling Definitions
+    classDef compStyle fill:#BFDBFE,stroke:#3B82F6,stroke-width:1.5px,color:#1E3A8A;
+
+    subgraph APITRACK ["APITRACK"]
+        TRK_Ingest["RFID Sensor Ingestor"]
+        TRK_Splits["Split Time and Pace Calculator"]
+        TRK_Board["Leaderboard Engine"]
+    end
+
+    subgraph MOBILEAPP ["MOBILEAPP"]
+        MA_UI["Map and Tracking UI"]
+        MA_Sync["API Sync Client"]
+        MA_Push["Push Receiver Module"]
+    end
+
+    subgraph WEBPORTAL ["WEBPORTAL"]
+        WP_Admin["Admin Operations UI"]
+        WP_Reg["Registration Form Module"]
+        WP_Auth["Session Manager"]
+    end
+
+    subgraph APIGATEWAY ["APIGATEWAY"]
+        GW_Notif["Notification Dispatcher"]
+        GW_Router["Request Router and Limiter"]
+        GW_Auth["Auth and JWT Service"]
+    end
+
+    subgraph APIREG ["APIREG"]
+        REG_Core["Runner Entry Engine"]
+        REG_Vendor["Vendor and Volunteer Module"]
+        REG_Permit["City Service Sync"]
+    end
+
+    %% Apply Component Styles
+    class TRK_Ingest,TRK_Splits,TRK_Board compStyle;
+    class MA_UI,MA_Sync,MA_Push compStyle;
+    class WP_Admin,WP_Reg,WP_Auth compStyle;
+    class GW_Notif,GW_Router,GW_Auth compStyle;
+    class REG_Core,REG_Vendor,REG_Permit compStyle;
+
+    %% Subgraph Background Styling
+    style APITRACK fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style MOBILEAPP fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style WEBPORTAL fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style APIGATEWAY fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    style APIREG fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+
+    %% Internal Module Connections
+    MA_UI -->|"Uses"| MA_Sync
+    WP_Admin -->|"Uses"| WP_Auth
+    
+    TRK_Ingest -->|"Raw split data"| TRK_Splits
+    TRK_Splits -->|"Calculated pace"| TRK_Board
+    TRK_Splits -->|"Triggers alerts"| GW_Notif
+
+    %% API Ingress and Gateway Connections
+    MA_Sync -->|"Calls API"| GW_Router
+    WP_Admin -->|"Calls API"| GW_Router
+    WP_Reg -->|"Calls API"| GW_Router
+
+    GW_Router -->|"Validates"| GW_Auth
+    GW_Router -->|"Routes reg"| REG_Core
+    GW_Router -->|"Routes tracking"| TRK_Ingest
 ```

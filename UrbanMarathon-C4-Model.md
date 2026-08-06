@@ -86,6 +86,7 @@ flowchart LR
 flowchart LR
     %% Styling Definitions
     classDef compStyle fill:#BFDBFE,stroke:#3B82F6,stroke-width:1.5px,color:#1E3A8A;
+    classDef darkSub fill:#374151,stroke:#4B5563,stroke-width:1px,color:#FFFFFF;
 
     subgraph APITRACK ["APITRACK"]
         TRK_Ingest["RFID Sensor Ingestor"]
@@ -117,19 +118,16 @@ flowchart LR
         REG_Permit["City Service Sync"]
     end
 
-    %% Apply Component Styles
+    %% Apply Component and Subgraph Styles
     class TRK_Ingest,TRK_Splits,TRK_Board compStyle;
     class MA_UI,MA_Sync,MA_Push compStyle;
     class WP_Admin,WP_Reg,WP_Auth compStyle;
     class GW_Notif,GW_Router,GW_Auth compStyle;
     class REG_Core,REG_Vendor,REG_Permit compStyle;
+    class APITRACK,MOBILEAPP,WEBPORTAL,APIGATEWAY,APIREG darkSub;
 
-    %% Subgraph Background Styling
-    style APITRACK fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style MOBILEAPP fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style WEBPORTAL fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style APIGATEWAY fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style APIREG fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    %% Global Link Styling for Orange Arrows
+    linkStyle default stroke:#FF8C00,stroke-width:2px;
 
     %% Internal Module Connections
     MA_UI -->|"Uses"| MA_Sync
@@ -157,6 +155,7 @@ flowchart LR
 flowchart LR
     %% Styling Definitions
     classDef classStyle fill:#BFDBFE,stroke:#3B82F6,stroke-width:1.5px,color:#1E3A8A;
+    classDef darkSub fill:#374151,stroke:#4B5563,stroke-width:1px,color:#FFFFFF;
 
     subgraph APIGATEWAYCORE ["APIGATEWAYCORE"]
         RequestRouter["RequestRouter
@@ -240,15 +239,11 @@ flowchart LR
 + getLeaderboard()"]
     end
 
-    %% Apply Component Styles
+    %% Apply Styles to Nodes and Subgraphs
     class RequestRouter,JWTAuthService,UserSession classStyle;
     class RegistrationController,RunnerService,Runner,EmergencyContact,BibAssignment classStyle;
     class RFIDIngestController,PaceCalculatorService,SplitTimeRecord,RunnerPaceState,LeaderboardService classStyle;
-
-    %% Subgraph Background Styling
-    style APIGATEWAYCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style APIREGISTRATIONCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
-    style APITRACKINGCORE fill:#F3F4F6,stroke:#D1D5DB,stroke-width:1px;
+    class APIGATEWAYCORE,APIREGISTRATIONCORE,APITRACKINGCORE darkSub;
 
     %% Global Link Styling for Orange Arrows
     linkStyle default stroke:#FF8C00,stroke-width:2px;

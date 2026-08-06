@@ -46,6 +46,12 @@ flowchart LR
     class C_App,C_Web,C_GW,C_RegAPI,C_TrackAPI,C_MainDB,C_BackDB containerStyle;
     class EXT_Sensors,EXT_City,EXT_Notif extStyle;
 
+    %% GitHub-Proof Forced Styles
+    style USERS fill:#E5E7EB !important,stroke:#9CA3AF !important,stroke-width:2px !important
+    style CONTEXT fill:#E5E7EB !important,stroke:#9CA3AF !important,stroke-width:2px !important
+    style CONTAINERS fill:#E5E7EB !important,stroke:#9CA3AF !important,stroke-width:2px !important
+    style EXTERNAL fill:#E5E7EB !important,stroke:#9CA3AF !important,stroke-width:2px !important
+
     %% Global Orange Link Styling
     linkStyle default stroke:#FF8C00,stroke-width:2px;
 

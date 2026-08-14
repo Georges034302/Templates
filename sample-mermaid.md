@@ -106,5 +106,8 @@ flowchart LR
 
 ## Cloud Architecture
 
+### Cloud Reference Architecture
+
 <img width="2400" height="1500" alt="urban-marathon-cloud-architecture" src="https://github.com/user-attachments/assets/7c344081-3f9e-4a21-9366-a0289285c5e9" />
+
 

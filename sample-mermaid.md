@@ -198,44 +198,43 @@ sequenceDiagram
 flowchart LR
     Participant[Participant]
     Spectator[Spectator]
-    Admin[Race Director / Coordinator]
+    Admin[Race Director]
+    Payment[Payment Service]
+    Notification[Notification Service]
+    Devices[Timing Devices]
 
-    subgraph MMS["Marathon Management System — Cloud Trust Boundary"]
+    subgraph MMS[Marathon Management System]
         Web[Web Application]
         Mobile[Mobile Application]
         API[Backend API]
         Identity[Identity Service]
         IoT[IoT Data Ingestion]
-        DB[(Marathon Database)]
-        Audit[(Security Audit Logs)]
+        Database[(Marathon Database)]
+        Logs[(Security Audit Logs)]
     end
 
-    Payment[External Payment Service]
-    Notify[External Notification Service]
-    Devices[Timing Devices]
+    Participant -->|HTTPS| Web
+    Participant -->|HTTPS| Mobile
+    Spectator -->|HTTPS| Mobile
+    Admin -->|HTTPS and MFA| Web
 
-    Participant -->|HTTPS / TLS| Web
-    Participant -->|HTTPS / TLS| Mobile
-    Spectator -->|HTTPS / TLS| Mobile
-    Admin -->|HTTPS + MFA| Web
-
-    Web -->|TLS · Access token| API
-    Mobile -->|TLS · Access token| API
+    Web -->|TLS and access token| API
+    Mobile -->|TLS and access token| API
 
     API -->|Authentication and RBAC| Identity
-    API -->|Validated and authorised access| DB
-    API -->|Tamper-resistant events| Audit
+    API -->|Validated data access| Database
+    API -->|Security events| Logs
 
-    API -->|TLS · Payment token only| Payment
-    API -->|TLS · Minimum contact data| Notify
+    API -->|TLS and payment token| Payment
+    API -->|TLS and minimum personal data| Notification
 
-    Devices -->|Device identity + signed messages| IoT
+    Devices -->|Signed timing messages| IoT
     IoT -->|Validated timing data| API
 
-    style MMS fill:#f7fbff,stroke:#d71920,stroke-width:3px
-    style DB fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
-    style Audit fill:#fff4cc,stroke:#d69e00,stroke-width:2px
-    style Identity fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+    style MMS fill:#eeeeee,stroke:#cc0000,stroke-width:3px,color:#111111
+    style Database fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Logs fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+    style Identity fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
 ```
 
 ### C4 Level 3 — Secure Backend API Component Diagram
@@ -244,55 +243,55 @@ flowchart LR
 flowchart LR
     Web[Web Application]
     Mobile[Mobile Application]
-    Identity[Identity Service]
-    Payment[Payment Service]
-    Notify[Notification Service]
-    DB[(Encrypted Marathon Database)]
-    Logs[(Tamper-resistant Audit Logs)]
+    IdentityService[Identity Service]
+    PaymentService[Payment Service]
+    NotificationService[Notification Service]
+    Database[(Encrypted Marathon Database)]
+    SecurityLogs[(Security Audit Logs)]
 
-    subgraph API["Backend API Container — Level 3"]
-        Gateway[API Controller]
-        Auth[Authentication and Authorisation]
+    subgraph BackendAPI[Backend API Container]
+        Controller[API Controller]
+        Authentication[Authentication and Authorisation]
         Validation[Input Validation]
         Registration[Registration Component]
-        PaymentIntegration[Payment Integration]
+        PaymentIntegration[Payment Integration Component]
         Tracking[Tracking Component]
-        Notification[Notification Component]
-        DataAccess[Secure Data Access]
-        Audit[Audit Logging Component]
+        Notifications[Notification Component]
+        DataAccess[Secure Data Access Component]
+        AuditLogging[Audit Logging Component]
     end
 
-    Web -->|TLS · Access token| Gateway
-    Mobile -->|TLS · Access token| Gateway
+    Web -->|TLS and access token| Controller
+    Mobile -->|TLS and access token| Controller
 
-    Gateway --> Auth
-    Auth -->|Validate identity and roles| Identity
-    Auth -->|Authorised request| Validation
+    Controller --> Authentication
+    Authentication -->|Validate identity and roles| IdentityService
+    Authentication --> Validation
 
-    Validation -->|Validated registration| Registration
-    Validation -->|Validated tracking request| Tracking
+    Validation --> Registration
+    Validation --> Tracking
 
     Registration --> PaymentIntegration
-    PaymentIntegration -->|TLS · Payment token| Payment
+    PaymentIntegration -->|TLS and payment token| PaymentService
 
     Registration --> DataAccess
     Tracking --> DataAccess
-    DataAccess -->|Parameterized queries · Least privilege| DB
+    DataAccess -->|Least-privilege access| Database
 
-    Registration --> Notification
-    Notification -->|TLS · Minimum required data| Notify
+    Registration --> Notifications
+    Notifications -->|Minimum required data| NotificationService
 
-    Auth --> Audit
-    Validation --> Audit
-    Registration --> Audit
-    PaymentIntegration --> Audit
-    DataAccess --> Audit
-    Audit --> Logs
+    Authentication --> AuditLogging
+    Validation --> AuditLogging
+    Registration --> AuditLogging
+    PaymentIntegration --> AuditLogging
+    DataAccess --> AuditLogging
+    AuditLogging --> SecurityLogs
 
-    style API fill:#f7fbff,stroke:#d71920,stroke-width:3px
-    style Auth fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
-    style Validation fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
-    style DataAccess fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
-    style Audit fill:#fff4cc,stroke:#d69e00,stroke-width:2px
+    style BackendAPI fill:#eeeeee,stroke:#cc0000,stroke-width:3px,color:#111111
+    style Authentication fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Validation fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style DataAccess fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style AuditLogging fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
 
 ```

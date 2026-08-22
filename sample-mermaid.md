@@ -192,7 +192,7 @@ sequenceDiagram
 | T-07      | Restrict vendor information         | Aggregated data and consent controls              | Vendor Portal         | Low           |
 | T-08      | Authenticate timing devices         | Device identity, signed messages and validation   | IoT Ingestion Service | Medium        |
 
-### Security Mitigation Analysis
+### C4 Level 2 — Secure Container Diagram
 
 ```mermaid
 flowchart LR
@@ -238,3 +238,61 @@ flowchart LR
     style Identity fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
 ```
 
+### C4 Level 3 — Secure Backend API Component Diagram
+
+```mermaid
+flowchart LR
+    Web[Web Application]
+    Mobile[Mobile Application]
+    Identity[Identity Service]
+    Payment[Payment Service]
+    Notify[Notification Service]
+    DB[(Encrypted Marathon Database)]
+    Logs[(Tamper-resistant Audit Logs)]
+
+    subgraph API["Backend API Container — Level 3"]
+        Gateway[API Controller]
+        Auth[Authentication and Authorisation]
+        Validation[Input Validation]
+        Registration[Registration Component]
+        PaymentIntegration[Payment Integration]
+        Tracking[Tracking Component]
+        Notification[Notification Component]
+        DataAccess[Secure Data Access]
+        Audit[Audit Logging Component]
+    end
+
+    Web -->|TLS · Access token| Gateway
+    Mobile -->|TLS · Access token| Gateway
+
+    Gateway --> Auth
+    Auth -->|Validate identity and roles| Identity
+    Auth -->|Authorised request| Validation
+
+    Validation -->|Validated registration| Registration
+    Validation -->|Validated tracking request| Tracking
+
+    Registration --> PaymentIntegration
+    PaymentIntegration -->|TLS · Payment token| Payment
+
+    Registration --> DataAccess
+    Tracking --> DataAccess
+    DataAccess -->|Parameterized queries · Least privilege| DB
+
+    Registration --> Notification
+    Notification -->|TLS · Minimum required data| Notify
+
+    Auth --> Audit
+    Validation --> Audit
+    Registration --> Audit
+    PaymentIntegration --> Audit
+    DataAccess --> Audit
+    Audit --> Logs
+
+    style API fill:#f7fbff,stroke:#d71920,stroke-width:3px
+    style Auth fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+    style Validation fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+    style DataAccess fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+    style Audit fill:#fff4cc,stroke:#d69e00,stroke-width:2px
+
+```

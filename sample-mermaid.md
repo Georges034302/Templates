@@ -110,4 +110,131 @@ flowchart LR
 
 <img width="2400" height="1500" alt="urban-marathon-cloud-architecture" src="https://github.com/user-attachments/assets/7c344081-3f9e-4a21-9366-a0289285c5e9" />
 
+---
+
+## Security and Privacy
+
+### Dynamic Diagram Analysis
+
+| Interaction # | Source                 | Destination            | Data Flow                        | Sensitive Data                | Trust Boundary             |
+| ------------- | ---------------------- | ---------------------- | -------------------------------- | ----------------------------- | -------------------------- |
+| 1             | Participant            | Mobile/Web Application | Registration details             | Personal information          | Internet → Cloud           |
+| 2             | Mobile/Web Application | Backend API            | Registration request and token   | Personal information, token   | Public → Application       |
+| 3             | Backend API            | Payment Service        | Payment amount and payment token | Payment token                 | Organisation → Third party |
+| 4             | Payment Service        | Backend API            | Payment confirmation             | Transaction reference         | Third party → Organisation |
+| 5             | Backend API            | Marathon Database      | Participant registration         | Personal and race information | Application → Data         |
+| 6             | Backend API            | Notification Service   | Confirmation message             | Name, email/phone             | Organisation → Third party |
+
+### Dynamic Diagram
+
+```mermaid
+sequenceDiagram
+    actor P as Participant
+
+    box Marathon Management System
+        participant App as Web / Mobile Application
+        participant API as Backend API
+        participant DB as Marathon Database
+    end
+
+    participant Pay as Payment Service
+    participant Notify as Notification Service
+
+    P->>App: 1. Submit registration and login details
+    Note over P,App: Sensitive data · Internet trust boundary
+
+    App->>API: 2. Send registration request and access token
+    Note over App,API: Sensitive data · Validate token and input
+
+    API->>Pay: 3. Send payment amount and payment token
+    Note over API,Pay: External-service trust boundary · TLS required
+
+    Pay-->>API: 4. Return payment status and transaction reference
+
+    API->>DB: 5. Store participant, race and payment records
+    Note over API,DB: Sensitive data · Encrypt at rest
+
+    DB-->>API: 6. Confirm registration stored
+
+    API->>Notify: 7. Send registration-confirmation request
+    Note over API,Notify: External-service trust boundary
+
+    Notify-->>P: 8. Deliver email or SMS confirmation
+
+    API-->>App: 9. Return registration confirmation
+    App-->>P: 10. Display registration and race details
+```
+
+### STRIDE Threat Model
+
+| Threat ID | Diagram Element/Data Flow | STRIDE Category        | Threat Description                                             | Security Impact             | Priority |
+| --------- | ------------------------- | ---------------------- | -------------------------------------------------------------- | --------------------------- | -------- |
+| T-01      | Participant login         | Spoofing               | An attacker uses stolen participant credentials                | Confidentiality             | High     |
+| T-02      | Registration request      | Tampering              | Registration category or payment amount is modified            | Integrity                   | High     |
+| T-03      | Registration transaction  | Repudiation            | A participant disputes submitting an entry or payment          | Accountability              | Medium   |
+| T-04      | Marathon Database         | Information Disclosure | Participant contact, medical or tracking data is exposed       | Confidentiality and privacy | High     |
+| T-05      | Tracking API              | Denial of Service      | Heavy or malicious traffic prevents live race tracking         | Availability                | High     |
+| T-06      | Volunteer account         | Elevation of Privilege | A volunteer gains race-director permissions                    | Authorization               | High     |
+| T-07      | Vendor access             | Information Disclosure | Vendors access participant information beyond legitimate needs | Privacy                     | High     |
+| T-08      | Timing devices            | Tampering              | False checkpoint or finish-time data is submitted              | Integrity                   | High     |
+
+
+### Security Mitigation Analysis
+
+| Threat ID | Mitigation Technique                | Security Control                                  | Responsible Element   | Residual Risk |
+| --------- | ----------------------------------- | ------------------------------------------------- | --------------------- | ------------- |
+| T-01      | Strong authentication               | MFA, secure sessions and login monitoring         | Identity Service      | Medium        |
+| T-02      | Validate trusted values server-side | Input validation, TLS and integrity checks        | Backend API           | Low           |
+| T-03      | Maintain auditable records          | Tamper-resistant transaction logs                 | Backend API           | Low           |
+| T-04      | Protect sensitive data              | Encryption, least privilege and data minimisation | Marathon Database     | Medium        |
+| T-05      | Protect service availability        | Rate limiting, autoscaling and DDoS protection    | API Gateway           | Medium        |
+| T-06      | Enforce role boundaries             | Role-based access control                         | Identity Service      | Low           |
+| T-07      | Restrict vendor information         | Aggregated data and consent controls              | Vendor Portal         | Low           |
+| T-08      | Authenticate timing devices         | Device identity, signed messages and validation   | IoT Ingestion Service | Medium        |
+
+### Security Mitigation Analysis
+
+```mermaid
+flowchart LR
+    Participant[Participant]
+    Spectator[Spectator]
+    Admin[Race Director / Coordinator]
+
+    subgraph MMS["Marathon Management System — Cloud Trust Boundary"]
+        Web[Web Application]
+        Mobile[Mobile Application]
+        API[Backend API]
+        Identity[Identity Service]
+        IoT[IoT Data Ingestion]
+        DB[(Marathon Database)]
+        Audit[(Security Audit Logs)]
+    end
+
+    Payment[External Payment Service]
+    Notify[External Notification Service]
+    Devices[Timing Devices]
+
+    Participant -->|HTTPS / TLS| Web
+    Participant -->|HTTPS / TLS| Mobile
+    Spectator -->|HTTPS / TLS| Mobile
+    Admin -->|HTTPS + MFA| Web
+
+    Web -->|TLS · Access token| API
+    Mobile -->|TLS · Access token| API
+
+    API -->|Authentication and RBAC| Identity
+    API -->|Validated and authorised access| DB
+    API -->|Tamper-resistant events| Audit
+
+    API -->|TLS · Payment token only| Payment
+    API -->|TLS · Minimum contact data| Notify
+
+    Devices -->|Device identity + signed messages| IoT
+    IoT -->|Validated timing data| API
+
+    style MMS fill:#f7fbff,stroke:#d71920,stroke-width:3px
+    style DB fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+    style Audit fill:#fff4cc,stroke:#d69e00,stroke-width:2px
+    style Identity fill:#e8f4ff,stroke:#0072ce,stroke-width:2px
+```
 

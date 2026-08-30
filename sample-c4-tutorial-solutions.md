@@ -295,3 +295,207 @@ flowchart LR
     style AuditLogging fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
 
 ```
+
+### Architecture Smell Analysis — Sample Solution
+
+| Reference # | C4 Element(s)                                                              | Architecture Smell      | Evidence                                                                                                                       | Proposed Correction                                                                                                                                         |
+| ----------- | -------------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AS-001      | Backend API                                                                | Feature Concentration   | Processes registrations, schedules, volunteers, vendors, tracking, notifications, feedback, results, and external integrations | Separate responsibilities into focused components or services for registration, event management, tracking, results, volunteers, vendors, and notifications |
+| AS-002      | Web Application, Mobile Application, Backend API and Notification Provider | Scattered Functionality | Notification responsibilities and connections are distributed across several elements                                          | Centralise notification rules in a Notification Component; clients only receive and display notifications                                                   |
+| AS-003      | Backend API                                                                | Dense Structure         | Directly communicates with applications, the database, authentication, payment, timing, notification, and mapping systems      | Introduce focused integration components and asynchronous messaging for timing and notification processing                                                  |
+| AS-004      | Marathon Database                                                          | Feature Concentration   | Stores registrations, schedules, volunteers, vendors, timing records, results, and feedback in one data store                  | Separate operational data from high-volume tracking data and raw timing events                                                                              |
+| AS-005      | Backend API and external services                                          | Unstable Dependency     | Core marathon functions depend directly on Payment, Notification, Mapping, and Timing services                                 | Access external services through adapters; apply queues, retries, timeouts, and failure handling                                                            |
+| AS-006      | Timing processing and Backend API                                          | Scattered Functionality | The Backend API processes tracking events while timing devices and ingestion services also handle timing responsibilities      | Route timing events through IoT ingestion, an event stream, and dedicated tracking processing                                                               |
+| AS-007      | Current C4 relationships                                                   | Cyclic Dependency       | No relationship currently shows two elements depending directly or indirectly on each other                                    | No correction required; recheck after updating the architecture                                                                                             |
+
+
+### Architecture Pattern Analysis — Sample Solution
+
+| Architecture Style | Requirements Supported                                                                              | Advantages                                                                                            | Disadvantages                                                                | Decision                                                       |
+| ------------------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Layered            | Registration, event administration, volunteer management, vendor management, and results publishing | Clear separation of presentation, business, and data responsibilities; easier testing and maintenance | Limited deployment independence; tightly coupled layers may restrict scaling | Use within the Web Application and Backend API                 |
+| Service-Oriented   | Payment, mapping, notification, authentication, and city-service integration                        | Reusable services and standard interfaces support external integration                                | Service coordination and governance add complexity                           | Use for integration with shared and external services          |
+| Event-Driven       | Timing events, live tracking, race updates, alerts, and result processing                           | Supports asynchronous processing, traffic spikes, resilience, and real-time updates                   | More difficult tracing, testing, ordering, and error handling                | Use for race-day timing, tracking, and notifications           |
+| Microservices      | Registration, tracking, results, volunteer, vendor, and notification capabilities                   | Independent deployment and scaling; isolates failures and responsibilities                            | Increases deployment, monitoring, networking, and data-management complexity | Use selectively for capabilities requiring independent scaling |
+
+> Selected Approach: A hybrid architecture combining layered organisation, service-based integration, event-driven race processing, and selectively deployed microservices.
+
+### Communication and Dependency Analysis — Sample Solution
+
+| Source                       | Destination                 | Data Exchanged                                                        | Response  | Dependency Holder            | Pattern and Protocol                              | Justification                                            |
+| ---------------------------- | --------------------------- | --------------------------------------------------------------------- | --------- | ---------------------------- | ------------------------------------------------- | -------------------------------------------------------- |
+| Web Application              | Backend API                 | Registration, administration, volunteer, vendor, and results requests | Immediate | Web Application              | API — HTTPS/JSON                                  | Browser operations require an immediate result           |
+| Mobile Application           | Backend API                 | Schedules, routes, tracking, and results requests                     | Immediate | Mobile Application           | API — HTTPS/JSON                                  | Mobile users require current race information            |
+| Web/Mobile Application       | Identity Service            | Login details and authentication tokens                               | Immediate | Web/Mobile Application       | API — OAuth 2.0/OpenID Connect over HTTPS         | Provides centralised authentication and token management |
+| Backend API                  | Marathon Database           | Registrations, schedules, volunteers, vendors, feedback, and results  | Immediate | Backend API                  | Repository — PostgreSQL connection                | Maintains authoritative operational data                 |
+| Backend API                  | Payment Service             | Payment token, amount, and transaction reference                      | Immediate | Backend API                  | API — HTTPS/JSON                                  | Registration requires payment confirmation               |
+| Backend API                  | Mapping Service             | Route, station, and viewing-location requests                         | Immediate | Backend API                  | API — HTTPS/JSON                                  | Applications require current map and route information   |
+| Timing and Checkpoint System | IoT Data Ingestion          | Runner identifier, checkpoint, and event time                         | Delayed   | Timing and Checkpoint System | Broker — MQTT over TLS                            | Supports secure, high-volume device communication        |
+| IoT Data Ingestion           | Event Stream                | Validated timing events                                               | Delayed   | IoT Data Ingestion           | Queue/Broker — event stream                       | Decouples timing devices from event processing           |
+| Event Stream                 | Serverless Event Processing | Timing and checkpoint events                                          | Delayed   | Serverless Event Processing  | Queue/Broker — asynchronous event consumption     | Supports scalable and resilient race-day processing      |
+| Serverless Event Processing  | Live-Tracking Data Store    | Runner location, pace, and checkpoint state                           | Delayed   | Serverless Event Processing  | Repository — NoSQL API                            | Supports frequent updates and low-latency tracking       |
+| Serverless Event Processing  | Operational Data Store      | Validated finish times and official results                           | Delayed   | Serverless Event Processing  | Repository — PostgreSQL connection                | Preserves validated authoritative results                |
+| Backend API                  | Notification Service        | Recipient, channel, and notification content                          | Delayed   | Backend API                  | Queue/Broker — asynchronous message               | Notification delivery should not block user requests     |
+| Notification Service         | Mobile Application          | Race updates and emergency alerts                                     | Delayed   | Mobile Application           | Persistent Connection — push-notification channel | Delivers timely race-day updates to mobile users         |
+
+### Updated C4 Level 2 — Container Diagram
+
+```mermaid
+flowchart TB
+    Participant[Participant]
+    Spectator[Spectator]
+    Director[Race Director]
+    Devices[Timing Devices]
+
+    subgraph MMS[Marathon Management System]
+        Web[Web Application]
+        Mobile[Mobile Application]
+        API[Backend API]
+        Identity[Identity Service]
+
+        Broker[Event Broker]
+        IoT[IoT Data Ingestion]
+        TrackingProcessor[Tracking Event Processor]
+        NotificationWorker[Notification Worker]
+
+        OperationalDB[(Operational Database)]
+        TrackingDB[(Live-Tracking Data Store)]
+        Logs[(Security Audit Logs)]
+    end
+
+    Payment[Payment Service]
+    Notification[Notification Provider]
+    Mapping[Mapping Service]
+
+    Participant -->|Uses over HTTPS| Web
+    Participant -->|Uses over HTTPS| Mobile
+    Spectator -->|Uses over HTTPS| Mobile
+    Director -->|Uses over HTTPS and MFA| Web
+
+    Web -->|Requests and responses · HTTPS/JSON| API
+    Mobile -->|Requests and responses · HTTPS/JSON| API
+
+    API -->|Validates tokens and roles · OIDC| Identity
+    API -->|Reads and writes operational data · SQL/TLS| OperationalDB
+    API -->|Reads live tracking data · NoSQL API| TrackingDB
+    API -->|Writes security events| Logs
+
+    API -->|Processes payments · HTTPS/JSON| Payment
+    API -->|Requests routes and locations · HTTPS/JSON| Mapping
+    API -->|Publishes notification requests| Broker
+
+    Devices -->|Sends signed timing events · MQTT/TLS| IoT
+    IoT -->|Publishes validated timing events| Broker
+
+    Broker -->|Delivers timing events| TrackingProcessor
+    TrackingProcessor -->|Updates live runner state| TrackingDB
+    TrackingProcessor -->|Stores validated results| OperationalDB
+    TrackingProcessor -->|Writes processing events| Logs
+
+    Broker -->|Delivers notification requests| NotificationWorker
+    NotificationWorker -->|Sends approved messages · HTTPS API| Notification
+    NotificationWorker -->|Writes delivery events| Logs
+
+    style MMS fill:#eeeeee,stroke:#cc0000,stroke-width:3px,color:#111111
+    style Broker fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+    style OperationalDB fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style TrackingDB fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Identity fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Logs fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+```
+
+### Updated C4 Level 3 — Backend API Component Diagram
+
+```mermaid
+flowchart TB
+    Web[Web Application]
+    Mobile[Mobile Application]
+
+    IdentityService[Identity Service]
+    PaymentService[Payment Service]
+    MappingService[Mapping Service]
+    EventBroker[Event Broker]
+
+    OperationalDB[(Operational Database)]
+    TrackingDB[(Live-Tracking Data Store)]
+    SecurityLogs[(Security Audit Logs)]
+
+    subgraph BackendAPI[Backend API Container]
+        direction TB
+
+        subgraph InterfaceLayer[Interface Layer]
+            Controller[API Controller]
+        end
+
+        subgraph SecurityLayer[Security Layer]
+            Authentication[Authentication and Authorisation]
+            Validation[Input Validation]
+        end
+
+        subgraph BusinessLayer[Business Layer]
+            Registration[Registration Component]
+            EventManagement[Event Management Component]
+            VolunteerManagement[Volunteer Management Component]
+            VendorManagement[Vendor Management Component]
+            TrackingQuery[Tracking Query Component]
+            Results[Results Component]
+        end
+
+        subgraph IntegrationLayer[Integration and Data Layer]
+            PaymentAdapter[Payment Adapter]
+            MappingAdapter[Mapping Adapter]
+            NotificationPublisher[Notification Publisher]
+            Repository[Operational Data Repository]
+            AuditLogging[Audit Logging Component]
+        end
+    end
+
+    Web -->|Requests · HTTPS/JSON and access token| Controller
+    Mobile -->|Requests · HTTPS/JSON and access token| Controller
+
+    Controller -->|Authenticates request| Authentication
+    Authentication -->|Validates identity and roles · OIDC| IdentityService
+    Authentication -->|Passes authorised request| Validation
+
+    Validation --> Registration
+    Validation --> EventManagement
+    Validation --> VolunteerManagement
+    Validation --> VendorManagement
+    Validation --> TrackingQuery
+    Validation --> Results
+
+    Registration --> PaymentAdapter
+    PaymentAdapter -->|Payment request · HTTPS/JSON| PaymentService
+
+    EventManagement --> MappingAdapter
+    MappingAdapter -->|Route request · HTTPS/JSON| MappingService
+
+    Registration --> Repository
+    EventManagement --> Repository
+    VolunteerManagement --> Repository
+    VendorManagement --> Repository
+    Results --> Repository
+    Repository -->|Reads and writes · SQL/TLS| OperationalDB
+
+    TrackingQuery -->|Reads live runner state · NoSQL API| TrackingDB
+
+    Registration --> NotificationPublisher
+    EventManagement --> NotificationPublisher
+    VolunteerManagement --> NotificationPublisher
+    NotificationPublisher -->|Publishes notification request| EventBroker
+
+    Authentication --> AuditLogging
+    Validation --> AuditLogging
+    PaymentAdapter --> AuditLogging
+    Repository --> AuditLogging
+    NotificationPublisher --> AuditLogging
+    AuditLogging -->|Writes security events| SecurityLogs
+
+    style BackendAPI fill:#eeeeee,stroke:#cc0000,stroke-width:3px,color:#111111
+    style Authentication fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Validation fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style NotificationPublisher fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+    style Repository fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style AuditLogging fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+```
+

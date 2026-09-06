@@ -188,6 +188,14 @@ Write-Host "Failed log   : $failedPath"
 
 ```
 
+### Execute: Add Bulk Students
+
+```powershell
+.\Add-TeamUsers.ps1 `
+    -GroupId "GROUP-ID-HERE" `
+    -CsvPath ".\CSV-FILENAME.csv"
+```
+
 ---
 
 ## Output

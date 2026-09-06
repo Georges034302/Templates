@@ -499,3 +499,145 @@ flowchart TB
     style AuditLogging fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
 ```
 
+### C4 Level 2 Architecture Evaluation — Sample Solution
+
+| Requirement                 | Architectural Support                                                                         | Rating (0–5) | Evidence                                                                                                                 | Improvement                                                                |
+| --------------------------- | --------------------------------------------------------------------------------------------- | -----------: | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| Participant registration    | Web Application, Mobile Application, Backend API, Operational Database and Payment Service    |            5 | Applications send registration requests to the Backend API, which coordinates payment and stores confirmed registrations | Add idempotency controls to prevent duplicate registrations and payments   |
+| Event administration        | Web Application, Backend API and Operational Database                                         |            5 | Race directors can manage routes, categories, schedules, volunteers and vendors through central business components      | Add an audit log for administrative changes                                |
+| Live runner tracking        | Timing Devices, IoT Data Ingestion, Event Stream, Tracking Processing and Tracking Data Store |            5 | Signed timing events are ingested, queued and processed asynchronously                                                   | Define handling for missing, duplicated and out-of-order events            |
+| Results publishing          | Results Component, Operational Database, Web Application and Mobile Application               |            4 | Validated timing data supports result calculation and publication through the applications                               | Add a result-verification and approval step before publication             |
+| Timely notifications        | Notification Component, Event Stream and Notification Provider                                |            4 | Notifications are processed asynchronously without blocking user requests                                                | Add retry, dead-letter queue and delivery-status monitoring                |
+| Performance and scalability | IoT Data Ingestion, Event Stream and dedicated event processing                               |            5 | High-volume race-day events are buffered and processed independently of the Backend API                                  | Define capacity targets and load-testing thresholds                        |
+| Availability                | Event Stream, separate processing services and managed cloud services                         |            4 | Queuing allows timing events to remain available when downstream processing is temporarily unavailable                   | Add failover, health monitoring and recovery procedures                    |
+| Security and privacy        | Authentication, access control, TLS, signed timing messages and protected data stores         |            4 | External requests and device events are authenticated and sensitive data is protected                                    | Document consent, retention and access rules for participant tracking data |
+| Data integrity              | Validated timing events, Operational Database and Tracking Data Store                         |            4 | Timing data is validated before processing and operational records are stored separately                                 | Add duplicate detection, sequence validation and reconciliation controls   |
+| Maintainability             | Focused Backend API components, external-service adapters and separated data stores           |            4 | Responsibilities are separated and external integrations are isolated from core business logic                           | Define interface contracts and ownership boundaries for each component     |
+
+
+### Architectural Alternatives Evaluation — Sample Solution
+
+| Scenario                                                  | Alternatives                                                                                                                                         | Benefits                                                                                                                                     | Trade-offs                                                                                                                                    | Decision                 | Justification                                                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------- |
+| A large burst of timing events occurs at a checkpoint     | **A:** Send events directly to the Backend API.<br>**B:** Send events through IoT Data Ingestion and the Event Stream.                               | **A:** Simple architecture; immediate processing.<br>**B:** Buffers traffic; supports independent scaling and reliable processing.           | **A:** Backend API may become overloaded; events may be lost.<br>**B:** Adds infrastructure, monitoring and event-ordering complexity.        | Select **Alternative B** | The Event Stream protects the Backend API and supports scalable race-day event processing.         |
+| The Notification Provider becomes temporarily unavailable | **A:** Call the provider synchronously from the Backend API.<br>**B:** Place notifications in a queue for asynchronous delivery.                     | **A:** Immediate delivery result; simple request flow.<br>**B:** Supports retries and prevents provider failure from blocking user requests. | **A:** Slow or failed provider calls affect application availability.<br>**B:** Notifications may be delayed and require queue monitoring.    | Select **Alternative B** | Asynchronous delivery improves resilience and isolates the application from provider failures.     |
+| Live-tracking data grows significantly during race day    | **A:** Store tracking and operational data in the Operational Database.<br>**B:** Store high-volume tracking data in a separate Tracking Data Store. | **A:** Simpler data management and fewer services.<br>**B:** Independent scaling; protects registration and administration workloads.        | **A:** Tracking traffic may reduce operational database performance.<br>**B:** Adds data consistency, integration and operational complexity. | Select **Alternative B** | Separating tracking data supports higher event volumes without affecting core marathon operations. |
+
+### HAZOP Analysis — Sample Solution
+
+| Interaction                         | Guide Word       | Deviation                                                         | Cause                                                           | Consequence                                                        | Risk Priority | Mitigation                                                                                 | Responsible Element                  |
+| ----------------------------------- | ---------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Timing Devices → IoT Data Ingestion | **No**           | No timing event is received                                       | Device failure, network outage or depleted battery              | Runner location and finish time cannot be recorded                 | High          | Monitor device connectivity, buffer events locally and retransmit after reconnection       | Timing Device and IoT Data Ingestion |
+| Timing Devices → IoT Data Ingestion | **More**         | Duplicate timing events are received                              | Device retry or repeated message delivery                       | Duplicate checkpoint records and incorrect race results            | High          | Assign a unique event ID and reject previously processed events                            | IoT Data Ingestion                   |
+| Timing Devices → IoT Data Ingestion | **Part of**      | Runner identifier, checkpoint identifier or event time is missing | Faulty sensor data or incomplete message construction           | Event cannot be matched to the correct runner or checkpoint        | High          | Validate the required message fields and route invalid events for review                   | IoT Data Ingestion                   |
+| Timing Devices → IoT Data Ingestion | **Other than**   | The event contains an incorrect runner or checkpoint identifier   | Device misconfiguration, tampering or incorrect chip assignment | Tracking information and results are assigned incorrectly          | High          | Authenticate devices, validate identifiers and reconcile events against race configuration | IoT Data Ingestion                   |
+| IoT Data Ingestion → Event Stream   | **Late**         | A valid event is published after a significant delay              | Network congestion, ingestion overload or repeated retries      | Live tracking becomes inaccurate and results processing is delayed | Medium        | Monitor event latency, scale ingestion capacity and prioritise timing events               | IoT Data Ingestion and Event Stream  |
+| Event Stream → Event Processing     | **Before/After** | Checkpoint events are processed in the wrong sequence             | Asynchronous delivery or parallel event processing              | Incorrect runner progress, pace estimates or finish results        | High          | Apply timestamps and sequence numbers; reorder or hold events before updating results      | Event Processing                     |
+
+
+### HAZOP Analysis — Sample Solution
+
+| Interaction                         | Guide Word       | Deviation                                                         | Cause                                                           | Consequence                                                        | Risk Priority | Mitigation                                                                                 | Responsible Element                  |
+| ----------------------------------- | ---------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------ | ------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Timing Devices → IoT Data Ingestion | **No**           | No timing event is received                                       | Device failure, network outage or depleted battery              | Runner location and finish time cannot be recorded                 | High          | Monitor device connectivity, buffer events locally and retransmit after reconnection       | Timing Device and IoT Data Ingestion |
+| Timing Devices → IoT Data Ingestion | **More**         | Duplicate timing events are received                              | Device retry or repeated message delivery                       | Duplicate checkpoint records and incorrect race results            | High          | Assign a unique event ID and reject previously processed events                            | IoT Data Ingestion                   |
+| Timing Devices → IoT Data Ingestion | **Part of**      | Runner identifier, checkpoint identifier or event time is missing | Faulty sensor data or incomplete message construction           | Event cannot be matched to the correct runner or checkpoint        | High          | Validate the required message fields and route invalid events for review                   | IoT Data Ingestion                   |
+| Timing Devices → IoT Data Ingestion | **Other than**   | The event contains an incorrect runner or checkpoint identifier   | Device misconfiguration, tampering or incorrect chip assignment | Tracking information and results are assigned incorrectly          | High          | Authenticate devices, validate identifiers and reconcile events against race configuration | IoT Data Ingestion                   |
+| IoT Data Ingestion → Event Stream   | **Late**         | A valid event is published after a significant delay              | Network congestion, ingestion overload or repeated retries      | Live tracking becomes inaccurate and results processing is delayed | Medium        | Monitor event latency, scale ingestion capacity and prioritise timing events               | IoT Data Ingestion and Event Stream  |
+| Event Stream → Event Processing     | **Before/After** | Checkpoint events are processed in the wrong sequence             | Asynchronous delivery or parallel event processing              | Incorrect runner progress, pace estimates or finish results        | High          | Apply timestamps and sequence numbers; reorder or hold events before updating results      | Event Processing                     |
+
+
+### Architectural Decision and Documentation — Sample Solution
+
+| Issue                                                               | Alternatives                                                                                | Decision                                            | Rationale                                                                                     | Affected C4 Elements                                                         | Stakeholders                            |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------- |
+| Checkpoint event bursts may overload the Backend API                | Process events directly through the Backend API; use IoT Data Ingestion and an Event Stream | Use IoT Data Ingestion and the Event Stream         | Buffers race-day traffic, prevents Backend API overload and supports independent scaling      | Timing Devices, IoT Data Ingestion, Event Stream, Event Processing           | Developers, Maintainers, Race Director  |
+| Notification Provider failure may block user requests               | Synchronous provider calls; asynchronous queued delivery                                    | Use asynchronous queued delivery                    | Isolates the Backend API from provider failures and supports retries                          | Backend API, Notification Component, Event Stream, Notification Provider     | Developers, Maintainers, Participants   |
+| High-volume tracking data may affect operational functions          | Use the Operational Database; use a separate Tracking Data Store                            | Use a separate Tracking Data Store                  | Allows tracking data to scale independently without affecting registration and administration | Event Processing, Tracking Data Store, Operational Database                  | Developers, Maintainers, Race Director  |
+| Duplicate or incomplete timing events may produce incorrect results | Process all received events; validate and deduplicate events before processing              | Validate and deduplicate timing events              | Protects tracking and result integrity by rejecting invalid or repeated events                | IoT Data Ingestion, Event Processing                                         | Developers, Maintainers, Participants   |
+| Timing events may arrive in the wrong sequence                      | Process events in arrival order; reorder events using timestamps and sequence numbers       | Reorder events before updating tracking and results | Prevents incorrect runner progress, pace estimates and race results                           | Event Stream, Event Processing, Results Component                            | Developers, Race Director, Participants |
+| Results may be published before verification                        | Publish automatically; require verification and approval                                    | Require verification before publication             | Reduces the risk of publishing inaccurate official results                                    | Results Component, Operational Database, Web Application, Mobile Application | Race Director, Participants, Spectators |
+
+### Updated C4 Level 2 — Container Diagram
+
+```mermaid
+flowchart TB
+    Participant[Participant]
+    Spectator[Spectator]
+    Director[Race Director]
+    Devices[Timing Devices]
+
+    subgraph MMS[Marathon Management System]
+        Web[Web Application]
+        Mobile[Mobile Application]
+        API[Backend API]
+        Identity[Identity Service]
+
+        IoT[IoT Data Ingestion]
+        Broker[Event Broker]
+        DLQ[Dead-Letter Queue]
+        TrackingProcessor[Tracking Event Processor]
+        NotificationWorker[Notification Worker]
+        Monitoring[Monitoring and Alerting]
+
+        OperationalDB[(Operational Database)]
+        TrackingDB[(Live-Tracking Data Store)]
+        Logs[(Security Audit Logs)]
+    end
+
+    Payment[Payment Service]
+    Notification[Notification Provider]
+    Mapping[Mapping Service]
+
+    Participant -->|Uses over HTTPS| Web
+    Participant -->|Uses over HTTPS| Mobile
+    Spectator -->|Uses over HTTPS| Mobile
+    Director -->|Uses over HTTPS and MFA| Web
+
+    Web -->|Requests and responses · HTTPS/JSON| API
+    Mobile -->|Requests and responses · HTTPS/JSON| API
+
+    API -->|Validates tokens and roles · OIDC| Identity
+    API -->|Reads and writes operational data · SQL/TLS| OperationalDB
+    API -->|Reads authorised tracking data · NoSQL API| TrackingDB
+    API -->|Writes auditable security events| Logs
+
+    API -->|Processes idempotent payments · HTTPS/JSON| Payment
+    API -->|Requests routes with timeout and retry · HTTPS/JSON| Mapping
+    API -->|Publishes notification requests| Broker
+
+    Devices -->|Buffers and retransmits signed events · MQTT/TLS| IoT
+    IoT -->|Validates device, fields and event ID| IoT
+    IoT -->|Publishes valid timing events| Broker
+    IoT -->|Routes invalid events| DLQ
+
+    Broker -->|Delivers timing events| TrackingProcessor
+    TrackingProcessor -->|Deduplicates and orders by time and sequence| TrackingProcessor
+    TrackingProcessor -->|Updates live runner state| TrackingDB
+    TrackingProcessor -->|Stores provisional results| OperationalDB
+    TrackingProcessor -->|Routes failed events| DLQ
+    TrackingProcessor -->|Writes processing events| Logs
+
+    Director -->|Reviews and approves results| Web
+    API -->|Publishes approved results| OperationalDB
+
+    Broker -->|Delivers notification requests| NotificationWorker
+    NotificationWorker -->|Sends with timeout and retry · HTTPS API| Notification
+    NotificationWorker -->|Routes failed notifications| DLQ
+    NotificationWorker -->|Writes delivery events| Logs
+
+    Monitoring -->|Monitors queue depth and failures| Broker
+    Monitoring -->|Monitors ingestion and event latency| IoT
+    Monitoring -->|Monitors processing health| TrackingProcessor
+    Monitoring -->|Monitors notification delivery| NotificationWorker
+    Monitoring -->|Monitors unresolved failures| DLQ
+
+    style MMS fill:#eeeeee,stroke:#cc0000,stroke-width:3px,color:#111111
+    style Broker fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+    style DLQ fill:#ffe5e5,stroke:#cc0000,stroke-width:2px,color:#111111
+    style Monitoring fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+    style OperationalDB fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style TrackingDB fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Identity fill:#dceeff,stroke:#0072ce,stroke-width:2px,color:#111111
+    style Logs fill:#fff4cc,stroke:#d69e00,stroke-width:2px,color:#111111
+```

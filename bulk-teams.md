@@ -99,14 +99,58 @@ If the user is added successfully, proceed with the bulk import.
 ## Step 7 – Bulk Add Users
 
 ```powershell
-$GroupId = "12345678-1234-1234-1234-123456789abc"
+param(
+    [Parameter(Mandatory = $true)]
+    [ValidatePattern('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')]
+    [string]$GroupId,
 
-$success = @()
-$failed = @()
+    [Parameter(Mandatory = $true)]
+    [string]$CsvPath,
 
-Import-Csv ".\emails.csv" | ForEach-Object {
+    [ValidateRange(0, 60000)]
+    [int]$DelayMilliseconds = 250
+)
 
-    $email = $_.Email
+$ErrorActionPreference = "Stop"
+
+if (-not (Get-Command Add-TeamUser -ErrorAction SilentlyContinue)) {
+    throw "Add-TeamUser is unavailable. Import MicrosoftTeams and connect first."
+}
+
+if (-not [System.IO.Path]::IsPathRooted($CsvPath)) {
+    $CsvPath = Join-Path (Get-Location) $CsvPath
+}
+
+if (-not (Test-Path -LiteralPath $CsvPath -PathType Leaf)) {
+    throw "CSV file not found: $CsvPath"
+}
+
+$CsvPath = (Resolve-Path -LiteralPath $CsvPath).Path
+$users = @(Import-Csv -LiteralPath $CsvPath)
+
+if ($users.Count -eq 0) {
+    throw "The CSV contains no user records: $CsvPath"
+}
+
+if (-not ($users[0].PSObject.Properties.Name -contains "Email")) {
+    throw "The CSV must contain a column named Email."
+}
+
+$csvBaseName = [System.IO.Path]::GetFileNameWithoutExtension($CsvPath)
+$outputDirectory = Split-Path -Parent $CsvPath
+$addedPath = Join-Path $outputDirectory "Added-$csvBaseName.txt"
+$failedPath = Join-Path $outputDirectory "Failed-$csvBaseName.txt"
+
+$success = [System.Collections.Generic.List[string]]::new()
+$failed = [System.Collections.Generic.List[string]]::new()
+
+foreach ($record in $users) {
+    $email = [string]$record.Email
+    $email = $email.Trim()
+
+    if ([string]::IsNullOrWhiteSpace($email)) {
+        continue
+    }
 
     Write-Host "Adding $email ..." -ForegroundColor Cyan
 
@@ -116,24 +160,32 @@ Import-Csv ".\emails.csv" | ForEach-Object {
             -User $email `
             -ErrorAction Stop
 
-        Write-Host "✓ Added $email" -ForegroundColor Green
-        $success += $email
+        Write-Host "Added $email" -ForegroundColor Green
+        $success.Add($email)
     }
     catch {
-        Write-Host "✗ Failed $email" -ForegroundColor Yellow
-        $failed += $email
+        $message = $_.Exception.Message
+        Write-Host "Failed $email - $message" -ForegroundColor Yellow
+        $failed.Add("$email`t$message")
     }
 
-    Start-Sleep -Milliseconds 250
+    if ($DelayMilliseconds -gt 0) {
+        Start-Sleep -Milliseconds $DelayMilliseconds
+    }
 }
 
-$success | Out-File Added.txt
-$failed | Out-File Failed.txt
+$success | Set-Content -LiteralPath $addedPath -Encoding UTF8
+$failed | Set-Content -LiteralPath $failedPath -Encoding UTF8
 
 Write-Host ""
-Write-Host "Completed!" -ForegroundColor Green
-Write-Host "Added : $($success.Count)"
-Write-Host "Failed: $($failed.Count)"
+Write-Host "Import completed." -ForegroundColor Green
+Write-Host "Team Group ID: $GroupId"
+Write-Host "CSV          : $CsvPath"
+Write-Host "Added        : $($success.Count)"
+Write-Host "Failed       : $($failed.Count)"
+Write-Host "Added log    : $addedPath"
+Write-Host "Failed log   : $failedPath"
+
 ```
 
 ---

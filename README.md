@@ -1,204 +1,356 @@
-## GitTemplates
+# Templates
 
-This Template contains useful command blocks for Git setup and configuration.
-  
-### <Repo> Setup from CLI:
+Useful command templates for Git, development environments, databases, Linux, and common development tasks.
 
-```
+---
+
+## Git Repository Setup
+
+### Create and Push a New Repository
+
+```bash
 git init
-git add -A
-git commit -m "add project to existing repo"
-git remote add origin https://github.com/<UserID>/<Repo>.git
-git push -u -f origin master
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/<username>/<repository>.git
+git push -u origin main
 ```
-### Configure GitHub Access with TOKEN (CLI):
 
+### Clone an Existing Repository
+
+```bash
+git clone https://github.com/<username>/<repository>.git
+cd <repository>
 ```
-gh auth logout
-unset GITHUB_TOKEN
-echo "TOKEN" | gh auth login --with-token
+
+### Common Git Commands
+
+```bash
+git status
+git add .
+git commit -m "<commit-message>"
+git pull
+git push
+```
+
+---
+
+## GitHub CLI Authentication
+
+Check GitHub CLI authentication:
+
+```bash
 gh auth status
 ```
 
-* Connect to VM using SSH (Authentication: password)
-```
-ssh azureuser@<Public_IP>
-```
+Login interactively:
 
-* Upload Website to VM using scp (Authentication: password)
-```
-scp -r <Website-dir> azureuser@<Public_IP>:
+```bash
+gh auth login
 ```
 
-* Copy Website files to /var/www/html
-```
-ssh azureuser@<Public_IP>
-cd <Website-dir>
-sudo cp -R * /var/www/html/
-```
+Login using a token:
 
-### Shorten Bash Prompt
-```
-PS1='\[\033[01;31m\]\u\[\033[01;35m\]@\[\033[01;32m\]\h\[\033[01;34m\]_\W\[\033[01;33m\]$\[\033[00m\] '
+```bash
+gh auth logout
+unset GITHUB_TOKEN
+echo "<token>" | gh auth login --with-token
+gh auth status
 ```
 
-### Enable and Setup Python Env on VsCode:
+> Avoid storing GitHub tokens directly in scripts or repositories.
 
-```
-- On Windows:
-  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process 
-  py -3 -m venv .venv    
-  .venv\scripts\activate
+---
 
-- On Linux:
-  python3 -m venv .venv    
-  source .venv/bin/activate
+## SSH
 
-- To install a package in the workspace:
-  python -m pip install <package-name>
+Connect to a remote Linux host:
+
+```bash
+ssh <username>@<host>
 ```
 
-### START/STOP MS SQL SERVICE (CMD or PowerShell):
+Example:
 
-```
-- Open CMD in Administrator mode:
-  net start SQLServerAgent
-  net stop SQLServerAgent    
-
-- Open PowerShell:
-  Get-Service -Name MSSQLSERVER
-  Set-Service -Name MSSQLSERVER -Status Running -PassThru
-  Get-Service -Name MSSQLSERVER
-
-```
-  
-### Connect to MySQL DB from CLI:
-
-```
-In CLI Type the command:
-  mysql -u <username> -p -h <end-point> -P PORT
-  mysql -h <mysql-instance-dns> -P 3306 -u <username> -p
-
-On Localhost:
-  mysql -u root -p -P 1433
-  
+```bash
+ssh azureuser@<public-ip>
 ```
 
-### Migrate MySQL Database:
+Copy a directory to a remote host:
 
-* Step 1: Create database backup file
+```bash
+scp -r <local-directory> <username>@<host>:<remote-directory>
 ```
 
-mysqldump --single-transaction -h (old_database_host) -u (old_database_username) -p (old_database_name) > backup.sql
+Example:
 
-```
-* Step 2: Restore database from backup file
-```
-
-mysql -h (new_database_host) -u (new_database_username) -p -D (new_database_name) < backup.sql
-
+```bash
+scp -r website azureuser@<public-ip>:~
 ```
 
-### Create and Run REACT app
+---
 
+## Linux Web Server Deployment
+
+Copy website files into the standard web root:
+
+```bash
+ssh <username>@<host>
+
+cd <website-directory>
+
+sudo cp -R . /var/www/html/
 ```
-npx create-react-app@5.0.0 my-app
 
+---
+
+## Python Virtual Environment
+
+### Windows PowerShell
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+py -m venv .venv
+
+.venv\Scripts\Activate.ps1
+```
+
+### Linux/macOS
+
+```bash
+python3 -m venv .venv
+
+source .venv/bin/activate
+```
+
+### Install Packages
+
+```bash
+python -m pip install <package-name>
+```
+
+Install dependencies from a requirements file:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### Save Dependencies
+
+```bash
+python -m pip freeze > requirements.txt
+```
+
+### Deactivate Environment
+
+```bash
+deactivate
+```
+
+---
+
+## MySQL CLI
+
+Connect to MySQL:
+
+```bash
+mysql -h <host> -P 3306 -u <username> -p
+```
+
+Connect to localhost:
+
+```bash
+mysql -h localhost -P 3306 -u root -p
+```
+
+---
+
+## MySQL Backup and Restore
+
+### Backup
+
+```bash
+mysqldump \
+  --single-transaction \
+  -h <source-host> \
+  -u <username> \
+  -p \
+  <database> > backup.sql
+```
+
+### Restore
+
+```bash
+mysql \
+  -h <destination-host> \
+  -u <username> \
+  -p \
+  <database> < backup.sql
+```
+
+---
+
+## Node.js Project Setup
+
+Initialize a Node.js project:
+
+```bash
+npm init -y
+```
+
+Install a dependency:
+
+```bash
+npm install <package-name>
+```
+
+Install development dependencies:
+
+```bash
+npm install --save-dev <package-name>
+```
+
+Run a project:
+
+```bash
 npm start
 ```
 
-### Building ThreeJS Project in VS Code:
+---
 
-* Download and extract Three JS package from: https://threejs.org/
-* Create a folder called CGLabs
-* Open that folder in vscode and create a subfolder called 'js'
-* Copy 'three.js' from the 'ThreeJS/build' folder into 'js'
-* Create index.html in CGLabs [by default vscode uses emmet to generate html snipets]
-* Download 'Live Server extension' in vs code [live server provides local server live-runtime for static apps]
-* Download Javascript ES6/ES7 extension
-* Download Javascript Babel extension
-* Create lab for each lab to develop threejs apps inside the labs folder
-* Insert the labs js scripts into index.html and load using live server
+## Express.js Setup
 
+Initialize the project:
 
-### Enable ThreeJS autocomplete in VS Code:
-
-* Install nodejs for your operating system [https://nodejs.org/en/download/]
-* In the vscode terminal run the commands:
-```
-sudo apt install node
-sudo apt install npm
-sudo apt update
-sudo apt upgrade
-```
-* In the vscode terminal run the command:  
-```
+```bash
 npm init -y
-[This command will generate the package.json file for your project]
-```
-* In the vscode terminal run the command:  
-```
-npm install @types/three 
-[This command will install the ThreeJS definition module in vscode]
-```
-### Netbeans Fix Script:
-```
-#!/bin/bash
-
-cd ~
-rm -rf .netbeans*
-rm -rf /tmp/`whoami`
 ```
 
-### Compile and Run C Script:
-```
-#!/bin/bash
+Install Express:
 
-gcc -Wall $1 $2 -lm -o $3
-
-./$3
-echo
-```
-### Setting Grep output coloring
-```
-add: alias grep='grep --color=auto' to the .bashrc in home directory
-
-or (bad fix)
-export GREP_OPTIONS='--color=auto'
-export GREP_COLOR='1;33'
-echo
+```bash
+npm install express
 ```
 
-### Find and Kill Process Windows
+Install Nodemon as a development dependency:
+
+```bash
+npm install --save-dev nodemon
 ```
-netstat -pant | grep "8080"
 
-taskkill /F /PID <process ID>
+Run the server directly:
+
+```bash
+node server.js
 ```
 
-### Environment Setup:
+Run using Nodemon:
 
-* Install Node.JS and npm package manager for your OS
-* Create a new directory and open the directory with vscode
-* Create and initialize node.js app
-  ```
-    npm -y init
-  ```
-* Install express.js dependencies
-  ```
-    npm install express
-  ```
-* Install nodemon to automatically refresh server code
-  ```
-    npm install -g nodemon
-  ```
-* Install ejs library from vscode extension then run the command
-  ```
-    npm install ejs
-  ```
-* Start the express app (main-server at root directory: server.js)
-  ```
-    nodemon server.js
-  ```
+```bash
+npx nodemon server.js
+```
 
+---
 
+## Compile and Run C
+
+Compile:
+
+```bash
+gcc -Wall <source.c> -lm -o <output>
+```
+
+Run:
+
+```bash
+./<output>
+```
+
+Example:
+
+```bash
+gcc -Wall main.c -lm -o main
+./main
+```
+
+---
+
+## Find a Process Using a Port
+
+### Linux
+
+```bash
+sudo lsof -i :8080
+```
+
+or:
+
+```bash
+ss -ltnp | grep :8080
+```
+
+Kill a process:
+
+```bash
+kill <PID>
+```
+
+Force termination if necessary:
+
+```bash
+kill -9 <PID>
+```
+
+### Windows
+
+```powershell
+netstat -ano | findstr :8080
+```
+
+Kill the process:
+
+```powershell
+taskkill /F /PID <PID>
+```
+
+---
+
+## Bash Prompt
+
+Temporary custom prompt:
+
+```bash
+PS1='\u@\h:\W\$ '
+```
+
+To make it permanent, add the configuration to:
+
+```text
+~/.bashrc
+```
+
+and reload:
+
+```bash
+source ~/.bashrc
+```
+
+---
+
+## Grep Colour Output
+
+Use:
+
+```bash
+grep --color=auto "<pattern>" <file>
+```
+
+Optional Bash alias:
+
+```bash
+alias grep='grep --color=auto'
+```
+
+Add the alias to `~/.bashrc` if you want it enabled permanently.

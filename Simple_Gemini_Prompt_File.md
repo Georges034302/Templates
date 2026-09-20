@@ -12,6 +12,8 @@ The script uses:
 
 ```python
 import google.generativeai as genai
+
+python -m pip install -U google-genai
 ```
 
 Set your API key:
@@ -25,18 +27,21 @@ export GEMINI_API_KEY="YOUR_API_KEY"
 Save as `ask.py`:
 
 ```python
-import os
 import sys
 
-import google.generativeai as genai
+from google import genai
 
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-model = genai.GenerativeModel("gemini-2.0-flash")
+client = genai.Client()
+MODEL = "gemini-3.8-flash"
 
 
 def ask(question):
-    return model.generate_content(question).text
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=question,
+    )
+    return response.text
 
 
 def ask_with_context(context_file, question):

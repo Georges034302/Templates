@@ -6,14 +6,14 @@ Install the Gemini Python package:
 
 ```bash
 pip install google-generativeai
+
+python -m pip install -U google-genai
 ```
 
 The script uses:
 
 ```python
 import google.generativeai as genai
-
-python -m pip install -U google-genai
 ```
 
 Set your API key:

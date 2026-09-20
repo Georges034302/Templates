@@ -1,22 +1,25 @@
-# Simple Gemini Prompt File Example
+# Simple Gemini CLI
+
+## Scope
+
+This example provides a simple interactive Python script for using Gemini.
+
+The script supports:
+
+* asking Gemini a question
+* sending the contents of a text file as context
+* quitting through a simple menu
 
 ## Requirements
 
-Install the Gemini Python package:
+Install the Gemini SDK:
 
 ```bash
-pip install google-generativeai
-
+pip install google-genai
 python -m pip install -U google-genai
 ```
 
-The script uses:
-
-```python
-import google.generativeai as genai
-```
-
-Set your API key:
+Set your Gemini API key:
 
 ```bash
 export GEMINI_API_KEY="YOUR_API_KEY"
@@ -27,8 +30,6 @@ export GEMINI_API_KEY="YOUR_API_KEY"
 Save as `ask.py`:
 
 ```python
-import sys
-
 from google import genai
 
 
@@ -37,75 +38,75 @@ MODEL = "gemini-3.8-flash"
 
 
 def ask(question):
-    response = client.models.generate_content(
+    return client.models.generate_content(
         model=MODEL,
         contents=question,
-    )
-    return response.text
+    ).text
 
 
-def ask_with_context(context_file, question):
-    with open(context_file, encoding="utf-8") as f:
+def ask_with_context(filename):
+    with open(filename, encoding="utf-8") as f:
         context = f.read()
 
-    return ask(f"{context}\n\n{question}")
+    return ask(context)
 
 
-context_file = sys.argv[1] if len(sys.argv) > 1 else None
-question = sys.stdin.read().strip() if not sys.stdin.isatty() else None
+while True:
+    print("\n[a] Ask")
+    print("[c] Ask with context")
+    print("[q] Quit")
 
+    choice = input("Choice: ").lower()
 
-match (context_file, question):
-    case (None, str(question)):
-        print(ask(question))
+    match choice:
+        case "a":
+            question = input("Question: ")
+            print(ask(question))
 
-    case (str(filename), None):
-        with open(filename, encoding="utf-8") as f:
-            print(ask(f.read()))
+        case "c":
+            filename = input("Context file: ")
+            print(ask_with_context(filename))
 
-    case (str(filename), str(question)):
-        print(ask_with_context(filename, question))
+        case "q":
+            break
 
-    case _:
-        print("Usage: python ask.py [context.txt] [< question]")
-```
-
-## Context File
-
-Example `context.txt`:
-
-```text
-You are a helpful assistant for WildSafe Australia.
-
-WildSafe is a wildlife rescue organisation operating across Australia.
-It rescues injured native animals and works with rescue centres in NSW,
-QLD, VIC, TAS, and SA.
-
-Do not invent information that is not provided.
+        case _:
+            print("Invalid option")
 ```
 
 ## Usage
 
-Question only:
+Run the script:
 
 ```bash
-echo "What is DevOps?" | python ask.py
+python ask.py
 ```
 
-Context only:
+Menu:
 
-```bash
-python ask.py context.txt
+```text
+[a] Ask
+[c] Ask with context
+[q] Quit
+Choice:
 ```
 
-Context and question:
+Ask a question:
 
-```bash
-echo "Summarise this organisation" | python ask.py context.txt
+```text
+Choice: a
+Question: What is generative AI?
 ```
 
-Question from a file:
+Use a context file:
 
-```bash
-python ask.py context.txt < question.txt
+```text
+Choice: c
+Context file: context.txt
+```
+
+Quit:
+
+```text
+Choice: q
 ```

@@ -1,41 +1,71 @@
 # Simple Gemini Prompt File Example
 
-## Purpose
+## Requirements
 
-This example shows how to:
+Install the Gemini Python package:
 
-- read a prompt from a text file
-- send that prompt to Gemini
-- print Gemini's response
-- choose the prompt file from the command line
+```bash
+pip install google-generativeai
+```
 
----
+The script uses:
+
+```python
+import google.generativeai as genai
+```
+
+Set your API key:
+
+```bash
+export GEMINI_API_KEY="YOUR_API_KEY"
+```
 
 ## Script
 
 Save as `ask.py`:
 
 ```python
-import sys
 import os
+import sys
+
 import google.generativeai as genai
 
-filename = sys.argv[1]
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-with open(filename, "r") as f:
-    prompt = f.read()
 
-response = model.generate_content(prompt)
+def ask(question):
+    return model.generate_content(question).text
 
-print(response.text)
+
+def ask_with_context(context_file, question):
+    with open(context_file, encoding="utf-8") as f:
+        context = f.read()
+
+    return ask(f"{context}\n\n{question}")
+
+
+context_file = sys.argv[1] if len(sys.argv) > 1 else None
+question = sys.stdin.read().strip() if not sys.stdin.isatty() else None
+
+
+match (context_file, question):
+    case (None, str(question)):
+        print(ask(question))
+
+    case (str(filename), None):
+        with open(filename, encoding="utf-8") as f:
+            print(ask(f.read()))
+
+    case (str(filename), str(question)):
+        print(ask_with_context(filename, question))
+
+    case _:
+        print("Usage: python ask.py [context.txt] [< question]")
 ```
 
----
-
-## Prompt File
+## Context File
 
 Example `context.txt`:
 
@@ -43,28 +73,34 @@ Example `context.txt`:
 You are a helpful assistant for WildSafe Australia.
 
 WildSafe is a wildlife rescue organisation operating across Australia.
-It rescues injured native animals and works with rescue centres in NSW, QLD, VIC, TAS, and SA.
+It rescues injured native animals and works with rescue centres in NSW,
+QLD, VIC, TAS, and SA.
 
-Your task:
-- Summarise the information briefly.
-- Identify the most important facts.
-- Do not invent information that is not provided.
+Do not invent information that is not provided.
 ```
-
----
 
 ## Usage
 
-Set the Gemini API key:
+Question only:
 
 ```bash
-export GEMINI_API_KEY="YOUR_API_KEY"
+echo "What is DevOps?" | python ask.py
 ```
 
-Run:
+Context only:
 
 ```bash
 python ask.py context.txt
 ```
 
-The script reads `context.txt`, sends its contents to Gemini, and prints the response.
+Context and question:
+
+```bash
+echo "Summarise this organisation" | python ask.py context.txt
+```
+
+Question from a file:
+
+```bash
+python ask.py context.txt < question.txt
+```

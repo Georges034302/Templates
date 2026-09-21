@@ -100,7 +100,7 @@ ORDER BY rescue_cost DESC;
 ```sql
 SELECT *
 FROM wildsafe_sane.animal_rescues
-WHERE animal_type = 'Koala'
+WHERE species = 'Koala'
 ORDER BY rescue_date;
 ```
 

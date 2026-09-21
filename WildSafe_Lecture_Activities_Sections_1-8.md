@@ -128,7 +128,7 @@ LIMIT 5;
 ```sql
 SELECT *
 FROM wildsafe_corrupted.animal_rescues
-WHERE animal_type = 'Koala'
+WHERE species = 'Koala'
   AND rescue_cost > 1000
 ORDER BY rescue_cost DESC;
 ```
@@ -138,7 +138,7 @@ ORDER BY rescue_cost DESC;
 ```sql
 SELECT *
 FROM wildsafe_corrupted.animal_rescues
-WHERE outcome = 'Released'
+WHERE status = 'Released'
 ORDER BY rescue_date DESC;
 ```
 
@@ -254,7 +254,7 @@ ORDER BY rescue_cost DESC;
 ```sql
 SELECT *
 FROM wildsafe_corrupted.animal_rescues
-WHERE animal_type = 'Koala'
+WHERE species = 'Koala'
   AND weight_kg > 70
 ORDER BY weight_kg DESC;
 ```
@@ -262,9 +262,9 @@ ORDER BY weight_kg DESC;
 ### Claim 6 — Is Released common?
 
 ```sql
-SELECT outcome, COUNT(*) AS total
+SELECT status, COUNT(*) AS total
 FROM wildsafe_corrupted.animal_rescues
-GROUP BY outcome
+GROUP BY status
 ORDER BY total DESC;
 ```
 
@@ -273,9 +273,9 @@ ORDER BY total DESC;
 ```sql
 SELECT *
 FROM wildsafe_corrupted.animal_rescues
-WHERE animal_type IS NULL
+WHERE species IS NULL
    OR rescue_cost IS NULL
-   OR outcome IS NULL;
+   OR status IS NULL;
 ```
 
 **Team output:** claim + SQL + result + conclusion.
@@ -293,9 +293,9 @@ Join rescue records with rescue centres and prepare one final evidence-based fin
 ```sql
 SELECT
     a.rescue_id,
-    a.animal_type,
+    a.species,
     a.rescue_cost,
-    a.outcome,
+    a.status,
     c.centre_name,
     c.city,
     c.state
@@ -310,7 +310,7 @@ ORDER BY a.rescue_cost DESC;
 ```sql
 SELECT
     a.rescue_id,
-    a.animal_type,
+    a.species,
     a.rescue_cost,
     c.centre_name,
     c.state

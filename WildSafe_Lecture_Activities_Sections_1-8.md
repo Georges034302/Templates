@@ -91,7 +91,7 @@ LIMIT 10;
 SELECT *
 FROM wildsafe_sane.animal_rescues
 WHERE rescue_cost > 1000
-  AND outcome = 'Released'
+  AND status = 'Released'
 ORDER BY rescue_cost DESC;
 ```
 
